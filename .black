@@ -1,0 +1,13 @@
+from json import tool
+
+
+[tool.black]
+line-length = 120
+target-version = ['py312']
+extend-exclude = '''
+    (venv,
+    alembic,
+    docker,
+    .git,
+    __pycache__)
+'''
