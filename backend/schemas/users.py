@@ -2,28 +2,9 @@ from typing import List, Optional
 
 from pydantic import BaseModel
 
-
-# ITEMS
-class ItemBase(BaseModel):
-    id: int
-    name: str
-    price: float
-    vendor_id: int
-
-    class Config:
-        orm_mode = True
+from .items import ItemCardRead
 
 
-class ItemCardRead(ItemBase):
-    description: str
-
-
-class ItemCreate(ItemCardRead):
-    pet_type_id: int
-    category_id: int
-
-
-# USER
 class UserBase(BaseModel):
     login: str
 
@@ -48,14 +29,3 @@ class UserCreate(UserBase):
 class UserUpdate(UserBase):
     email: Optional[str] = None
     city: Optional[str] = None
-
-
-# PARTNERS
-class Partner(BaseModel):
-    id: int
-    name: str
-    description: Optional[str] = None
-    # picture
-
-    class Config:
-        orm_mode = True

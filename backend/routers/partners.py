@@ -1,17 +1,17 @@
 from typing import List
 
-import schemas
 from database import get_db
 from fastapi import APIRouter, Depends, HTTPException
 from models.partner import Partner
+from schemas.partners import PartnerBase
 from sqlalchemy.orm import Session
 
 
 router = APIRouter()
 
 
-@router.post("/partners/", response_model=schemas.Partner)
-def create_partner(partner: schemas.Partner, db: Session = Depends(get_db)):
+@router.post("/partners/", response_model=PartnerBase)
+def create_partner(partner: PartnerBase, db: Session = Depends(get_db)):
     db_partner = Partner(**partner.dict())
 
     db.add(db_partner)
@@ -20,7 +20,7 @@ def create_partner(partner: schemas.Partner, db: Session = Depends(get_db)):
     return db_partner
 
 
-@router.get("/partners/", response_model=List[schemas.Partner])
+@router.get("/partners/", response_model=List[PartnerBase])
 def get_partners(db: Session = Depends(get_db)):
     query = db.query(Partner)
 
@@ -30,7 +30,7 @@ def get_partners(db: Session = Depends(get_db)):
     return query.all()
 
 
-@router.delete("/partner/{partner_id}", response_model=schemas.ItemCardRead)
+@router.delete("/partner/{partner_id}", response_model=PartnerBase)
 def delete_partner(partner_id: int, db: Session = Depends(get_db)):
     partner_to_delete = db.query(Partner).filter(Partner.id == partner_id).first()
 
