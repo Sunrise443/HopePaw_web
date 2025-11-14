@@ -20,7 +20,7 @@ export function ProductMiniature({
   return (
     <div
       key={id}
-      className="bg-[#9C8F73] rounded-[30px] w-[300px] h-[420px] p-3 flex flex-col"
+      className="bg-[#A0937D] rounded-[30px] w-[300px] h-[420px] p-3 flex flex-col"
     >
       <img
         src={new URL(imageUrl, import.meta.url).href}

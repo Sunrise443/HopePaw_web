@@ -1,6 +1,7 @@
 import { MenuButton } from "./MenuButton";
 import BasketIcon from "../assets/BasketIcon.svg";
 import ProfileIcon from "../assets/ProfileIcon.svg";
+import { NavLink } from "react-router-dom";
 
 interface HeaderProps {
   isLoggedIn: boolean;
@@ -9,7 +10,11 @@ interface HeaderProps {
 export function Header({ isLoggedIn = false }: HeaderProps) {
   const ProfileButtons = () => {
     if (isLoggedIn) {
-      return <img className="size-7" src={ProfileIcon} alt="Профиль" />;
+      return (
+        <NavLink to={"/profile"}>
+          <img className="size-7" src={ProfileIcon} alt="Профиль" />
+        </NavLink>
+      );
     }
     return (
       <div className="flex items-center space-x-4">
