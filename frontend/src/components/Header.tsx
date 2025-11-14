@@ -1,0 +1,37 @@
+import { MenuButton } from "./MenuButton";
+import BasketIcon from "../assets/BasketIcon.svg";
+import ProfileIcon from "../assets/ProfileIcon.svg";
+
+interface HeaderProps {
+  isLoggedIn: boolean;
+}
+
+export function Header({ isLoggedIn = false }: HeaderProps) {
+  const ProfileButtons = () => {
+    if (isLoggedIn) {
+      return <img className="size-7" src={ProfileIcon} alt="Профиль" />;
+    }
+    return (
+      <div className="flex items-center space-x-4">
+        <MenuButton buttonName="Вход" navLinkTo="/login" />
+        <MenuButton buttonName="Регистрация" navLinkTo="/register" />
+      </div>
+    );
+  };
+  return (
+    <div className="bg-[#A0937D] flex items-center justify-between p-4 text-[#EDE6DB] font-semibold">
+      <div className="flex items-center space-x-4">
+        <div className="text-xl font-bold">HopePaw</div>
+        <MenuButton buttonName="Каталог" navLinkTo="/catalog" />
+        <MenuButton buttonName="О нас" navLinkTo="/about" />
+      </div>
+
+      <div className="flex items-center space-x-4">
+        <button aria-label="Корзина">
+          <img className="size-7" src={BasketIcon} alt="Корзина" />
+        </button>
+        <ProfileButtons />
+      </div>
+    </div>
+  );
+}
