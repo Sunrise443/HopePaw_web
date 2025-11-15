@@ -7,6 +7,143 @@ const PET_TYPES = [
   { value: "other", label: "Другое" },
 ];
 
+type Product = {
+  id: number;
+  name: string;
+  vendor: string;
+  price: number;
+  imageUrl: string;
+};
+
+const products: Product[] = [
+  {
+    id: 1,
+    name: "Костюм для грейхаунда",
+    vendor: "GodDog",
+    price: 5500,
+    imageUrl: "../assets/pic3.jpg",
+  },
+  {
+    id: 2,
+    name: "Кошачий свитер",
+    vendor: "Усатые",
+    price: 1000,
+    imageUrl: "../assets/pic3.jpg",
+  },
+  {
+    id: 3,
+    name: "Миска рыбка",
+    vendor: "Банановая рыба",
+    price: 660,
+    imageUrl: "../assets/pic3.jpg",
+  },
+  {
+    id: 4,
+    name: "Миска космокот",
+    vendor: "Усатые",
+    price: 660,
+    imageUrl: "../assets/pic3.jpg",
+  },
+  {
+    id: 5,
+    name: "Костюм для грейхаунда",
+    vendor: "Clown's costume",
+    price: 2200,
+    imageUrl: "../assets/pic3.jpg",
+  },
+  {
+    id: 6,
+    name: 'Костюм для таксы "Банан"',
+    vendor: "idk",
+    price: 0,
+    imageUrl: "../assets/pic3.jpg",
+  },
+  {
+    id: 1,
+    name: "Костюм для грейхаунда",
+    vendor: "GodDog",
+    price: 5500,
+    imageUrl: "../assets/pic3.jpg",
+  },
+  {
+    id: 2,
+    name: "Кошачий свитер",
+    vendor: "Усатые",
+    price: 1000,
+    imageUrl: "../assets/pic3.jpg",
+  },
+  {
+    id: 3,
+    name: "Миска рыбка",
+    vendor: "Банановая рыба",
+    price: 660,
+    imageUrl: "../assets/pic3.jpg",
+  },
+  {
+    id: 4,
+    name: "Миска космокот",
+    vendor: "Усатые",
+    price: 660,
+    imageUrl: "../assets/pic3.jpg",
+  },
+  {
+    id: 5,
+    name: "Костюм для грейхаунда",
+    vendor: "Clown's costume",
+    price: 2200,
+    imageUrl: "../assets/pic3.jpg",
+  },
+  {
+    id: 6,
+    name: 'Костюм для таксы "Банан"',
+    vendor: "idk",
+    price: 0,
+    imageUrl: "../assets/pic3.jpg",
+  },
+  {
+    id: 1,
+    name: "Костюм для грейхаунда",
+    vendor: "GodDog",
+    price: 5500,
+    imageUrl: "../assets/pic3.jpg",
+  },
+  {
+    id: 2,
+    name: "Кошачий свитер",
+    vendor: "Усатые",
+    price: 1000,
+    imageUrl: "../assets/pic3.jpg",
+  },
+  {
+    id: 3,
+    name: "Миска рыбка",
+    vendor: "Банановая рыба",
+    price: 660,
+    imageUrl: "../assets/pic3.jpg",
+  },
+  {
+    id: 4,
+    name: "Миска космокот",
+    vendor: "Усатые",
+    price: 660,
+    imageUrl: "../assets/pic3.jpg",
+  },
+  {
+    id: 5,
+    name: "Костюм для грейхаунда",
+    vendor: "Clown's costume",
+    price: 2200,
+    imageUrl: "../assets/pic3.jpg",
+  },
+  {
+    id: 6,
+    name: 'Костюм для таксы "Банан"',
+    vendor: "idk",
+    price: 0,
+    imageUrl: "../assets/pic3.jpg",
+  },
+];
+
 export function Catalog() {
   return (
     <div>
@@ -38,14 +175,16 @@ export function Catalog() {
           />
         </div>
 
-        <div>
-          <ProductMiniature
-            id={1}
-            name="SOMETHING FOR DOG"
-            vendor="Silly DOgs"
-            price={4000}
-            imageUrl="../assets/d31497b627cfa44bc6b2283d2b27e116.jpg"
-          />
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-6">
+          {products.map(({ id, name, vendor, price, imageUrl }) => (
+            <ProductMiniature
+              id={id}
+              name={name}
+              vendor={vendor}
+              price={price}
+              imageUrl={imageUrl}
+            />
+          ))}
         </div>
       </div>
     </div>

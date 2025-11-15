@@ -1,8 +1,103 @@
 import { Header } from "../components/Header.tsx";
 import { ProductMiniature } from "../components/ProductMiniature.tsx";
 
+type Product = {
+  id: number;
+  name: string;
+  vendor: string;
+  price: number;
+  imageUrl: string;
+};
+
+const products: Product[] = [
+  {
+    id: 1,
+    name: "Костюм для грейхаунда",
+    vendor: "GodDog",
+    price: 5500,
+    imageUrl: "../assets/d31497b627cfa44bc6b2283d2b27e116.jpg",
+  },
+  {
+    id: 2,
+    name: "Кошачий свитер",
+    vendor: "Усатые",
+    price: 1000,
+    imageUrl: "../assets/d31497b627cfa44bc6b2283d2b27e116.jpg",
+  },
+  {
+    id: 3,
+    name: "Миска рыбка",
+    vendor: "Банановая рыба",
+    price: 660,
+    imageUrl: "../assets/d31497b627cfa44bc6b2283d2b27e116.jpg",
+  },
+  {
+    id: 4,
+    name: "Миска космокот",
+    vendor: "Усатые",
+    price: 660,
+    imageUrl: "../assets/d31497b627cfa44bc6b2283d2b27e116.jpg",
+  },
+  {
+    id: 5,
+    name: "Костюм для грейхаунда",
+    vendor: "Clown's costume",
+    price: 2200,
+    imageUrl: "../assets/d31497b627cfa44bc6b2283d2b27e116.jpg",
+  },
+  {
+    id: 6,
+    name: 'Костюм для таксы "Банан"',
+    vendor: "idk",
+    price: 0,
+    imageUrl: "../assets/d31497b627cfa44bc6b2283d2b27e116.jpg",
+  },
+  {
+    id: 1,
+    name: "Костюм для грейхаунда",
+    vendor: "GodDog",
+    price: 5500,
+    imageUrl: "../assets/d31497b627cfa44bc6b2283d2b27e116.jpg",
+  },
+  {
+    id: 2,
+    name: "Кошачий свитер",
+    vendor: "Усатые",
+    price: 1000,
+    imageUrl: "../assets/d31497b627cfa44bc6b2283d2b27e116.jpg",
+  },
+  {
+    id: 3,
+    name: "Миска рыбка",
+    vendor: "Банановая рыба",
+    price: 660,
+    imageUrl: "../assets/d31497b627cfa44bc6b2283d2b27e116.jpg",
+  },
+  {
+    id: 4,
+    name: "Миска космокот",
+    vendor: "Усатые",
+    price: 660,
+    imageUrl: "../assets/d31497b627cfa44bc6b2283d2b27e116.jpg",
+  },
+  {
+    id: 5,
+    name: "Костюм для грейхаунда",
+    vendor: "Clown's costume",
+    price: 2200,
+    imageUrl: "../assets/d31497b627cfa44bc6b2283d2b27e116.jpg",
+  },
+  {
+    id: 6,
+    name: 'Костюм для таксы "Банан"',
+    vendor: "idk",
+    price: 0,
+    imageUrl: "../assets/d31497b627cfa44bc6b2283d2b27e116.jpg",
+  },
+];
+
 export function Profile() {
-  const saveNewProfileButton = (isChangedInfo: boolean) => {
+  function saveNewProfileButton(isChangedInfo: boolean) {
     return isChangedInfo ? (
       <button className="bg-[#574C3A] text-[#EDE6DB] rounded-[15px] px-4 py-1 w-full mt-4">
         Сохранить
@@ -10,7 +105,8 @@ export function Profile() {
     ) : (
       <></>
     );
-  };
+  }
+
   return (
     <div>
       <Header isLoggedIn />
@@ -63,14 +159,16 @@ export function Profile() {
           </div>
         </div>
         <h1 className="text-[#574C3A] mb-4 ml-4">Покупки</h1>
-        <div>
-          <ProductMiniature
-            id={1}
-            name="SOMETHING FOR DOG"
-            vendor="Silly DOgs"
-            price={4000}
-            imageUrl="../assets/d31497b627cfa44bc6b2283d2b27e116.jpg"
-          />
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-6">
+          {products.map(({ id, name, vendor, price, imageUrl }) => (
+            <ProductMiniature
+              id={id}
+              name={name}
+              vendor={vendor}
+              price={price}
+              imageUrl={imageUrl}
+            />
+          ))}
         </div>
       </div>
     </div>

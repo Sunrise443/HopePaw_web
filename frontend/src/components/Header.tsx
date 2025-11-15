@@ -26,7 +26,9 @@ export function Header({ isLoggedIn = false }: HeaderProps) {
   return (
     <div className="bg-[#A0937D] flex items-center justify-between p-4 text-[#EDE6DB] font-semibold">
       <div className="flex items-center space-x-4">
-        <div className="text-xl font-bold">HopePaw</div>
+        <button className="text-xl font-bold">
+          <NavLink to="/">HopePaw</NavLink>
+        </button>
         <MenuButton buttonName="Каталог" navLinkTo="/catalog" />
         <MenuButton buttonName="О нас" navLinkTo="/about" />
       </div>
