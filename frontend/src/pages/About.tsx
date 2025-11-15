@@ -1,7 +1,13 @@
 import { Header } from "../components/Header.tsx";
 import { VendorCard } from "../components/VendorCard.tsx";
 
-const vendors = [
+type Vendor = {
+  id: number;
+  name: string;
+  description: string;
+};
+
+const vendors: Vendor[] = [
   {
     id: 1,
     name: "Jurassic Bark",
@@ -67,10 +73,11 @@ export function About() {
         </h1>
 
         <div className="flex flex-col items-center gap-6 w-full max-w-2xl">
-          {vendors.map((vendor) => (
+          {vendors.map(({ id, name, description }) => (
             <VendorCard
-              key={vendor.id}
-              {...vendor}
+              id={id}
+              name={name}
+              description={description}
               imageUrl="../assets/pic4.jpg"
             />
           ))}

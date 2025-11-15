@@ -35,7 +35,9 @@ export function Header({ isLoggedIn = false }: HeaderProps) {
 
       <div className="flex items-center space-x-4">
         <button aria-label="Корзина">
-          <img className="size-7" src={BasketIcon} alt="Корзина" />
+          <NavLink to="/basket">
+            <img className="size-7" src={BasketIcon} alt="Корзина" />
+          </NavLink>
         </button>
         <ProfileButtons />
       </div>

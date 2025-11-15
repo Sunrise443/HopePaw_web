@@ -4,6 +4,7 @@ import { Home } from "./pages/Home";
 import { Catalog } from "./pages/Catalog";
 import { Profile } from "./pages/Profile";
 import { About } from "./pages/About";
+import Basket from "./pages/Basket";
 
 const App: React.FC = () => {
   return (
@@ -13,6 +14,9 @@ const App: React.FC = () => {
         <Route path="/catalog" element={<Catalog />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/about" element={<About />} />
+        <Route path="/login" element={<About />} />
+        <Route path="/register" element={<About />} />
+        <Route path="/basket" element={<Basket />} />
       </Routes>
     </BrowserRouter>
   );

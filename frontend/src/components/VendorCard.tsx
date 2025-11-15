@@ -1,7 +1,5 @@
-import type { Key } from "react";
-
 interface VendorCardProps {
-  id: Key;
+  id: number;
   name: string;
   description: string;
   imageUrl: string;
