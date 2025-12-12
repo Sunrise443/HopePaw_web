@@ -159,7 +159,7 @@ export function Profile() {
           </div>
         </div>
         <h1 className="text-[#574C3A] mb-4 ml-4">Покупки</h1>
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-6">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-6">
           {products.map(({ id, name, vendor, price, imageUrl }) => (
             <ProductMiniature
               id={id}

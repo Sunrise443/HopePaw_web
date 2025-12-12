@@ -54,11 +54,13 @@ export default function Basket() {
           ))}
           <div className="flex items-center bg-[#A0937D] text-[#EDE6DB] rounded-xl gap-3 px-4 py-2">
             Дополнительная сумма пожертвований
-            <input
-              type="number"
-              className="bg-[#EDE6DB] text-[#A0937D] ml-2 rounded-lg px-3 py-1 w-32 text-right outline-none"
-            />
-            руб.
+            <div className="flex items-center gap-2 ml-auto">
+              <input
+                type="number"
+                className="bg-[#EDE6DB] text-[#A0937D] rounded-lg px-3 py-1 w-32 text-right outline-none"
+              />
+              руб.
+            </div>
           </div>
         </div>
 
@@ -87,7 +89,7 @@ export default function Basket() {
 
       <h2 className="m-4 text-xl text-[#574C3A]">Выбрать приют</h2>
 
-      <div className="flex flex-col lg:flex-row justify-center gap-16 max-w-[60%] mx-auto">
+      <div className="flex flex-col lg:flex-row gap-16 max-w-[60%] mx-auto">
         <div className="flex-1 max-w-md">
           <form className="bg-[#A0937D] rounded-2xl p-3 flex flex-col gap-4">
             <input
