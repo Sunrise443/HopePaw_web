@@ -10,7 +10,9 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     login: Mapped[str] = mapped_column(String, unique=True, nullable=False)
-    password: Mapped[str] = mapped_column(String, nullable=False)
+    hashed_password: Mapped[str] = mapped_column(String, nullable=False)
+    is_active: Mapped[bool] = mapped_column(default=False)
+
     email: Mapped[str] = mapped_column(String, nullable=False)
     city: Mapped[str] = mapped_column(String, nullable=True)
     money_sent: Mapped[int] = mapped_column(Integer, default=0)
