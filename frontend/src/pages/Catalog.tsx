@@ -1,188 +1,134 @@
+import { useEffect, useState } from "react";
 import { Header } from "../components/Header.tsx";
 import { ProductMiniature } from "../components/ProductMiniature.tsx";
+import type { Item } from "../types/item.ts";
+import { getItems } from "../api/items.ts";
 
 const PET_TYPES = [
-  { value: "dog", label: "Собака" },
-  { value: "cat", label: "Кот" },
-  { value: "other", label: "Другое" },
+  { id: 0, value: 0, label: "Собака" },
+  { id: 1, value: 1, label: "Кот" },
+  { id: 2, value: 2, label: "Другое" },
 ];
 
-type Product = {
-  id: number;
-  name: string;
-  vendor: string;
-  price: number;
-  imageUrl: string;
-};
-
-const products: Product[] = [
-  {
-    id: 1,
-    name: "Костюм для грейхаунда",
-    vendor: "GodDog",
-    price: 5500,
-    imageUrl: "../assets/pic3.jpg",
-  },
-  {
-    id: 2,
-    name: "Кошачий свитер",
-    vendor: "Усатые",
-    price: 1000,
-    imageUrl: "../assets/pic3.jpg",
-  },
-  {
-    id: 3,
-    name: "Миска рыбка",
-    vendor: "Банановая рыба",
-    price: 660,
-    imageUrl: "../assets/pic3.jpg",
-  },
-  {
-    id: 4,
-    name: "Миска космокот",
-    vendor: "Усатые",
-    price: 660,
-    imageUrl: "../assets/pic3.jpg",
-  },
-  {
-    id: 5,
-    name: "Костюм для грейхаунда",
-    vendor: "Clown's costume",
-    price: 2200,
-    imageUrl: "../assets/pic3.jpg",
-  },
-  {
-    id: 6,
-    name: 'Костюм для таксы "Банан"',
-    vendor: "idk",
-    price: 0,
-    imageUrl: "../assets/pic3.jpg",
-  },
-  {
-    id: 1,
-    name: "Костюм для грейхаунда",
-    vendor: "GodDog",
-    price: 5500,
-    imageUrl: "../assets/pic3.jpg",
-  },
-  {
-    id: 2,
-    name: "Кошачий свитер",
-    vendor: "Усатые",
-    price: 1000,
-    imageUrl: "../assets/pic3.jpg",
-  },
-  {
-    id: 3,
-    name: "Миска рыбка",
-    vendor: "Банановая рыба",
-    price: 660,
-    imageUrl: "../assets/pic3.jpg",
-  },
-  {
-    id: 4,
-    name: "Миска космокот",
-    vendor: "Усатые",
-    price: 660,
-    imageUrl: "../assets/pic3.jpg",
-  },
-  {
-    id: 5,
-    name: "Костюм для грейхаунда",
-    vendor: "Clown's costume",
-    price: 2200,
-    imageUrl: "../assets/pic3.jpg",
-  },
-  {
-    id: 6,
-    name: 'Костюм для таксы "Банан"',
-    vendor: "idk",
-    price: 0,
-    imageUrl: "../assets/pic3.jpg",
-  },
-  {
-    id: 1,
-    name: "Костюм для грейхаунда",
-    vendor: "GodDog",
-    price: 5500,
-    imageUrl: "../assets/pic3.jpg",
-  },
-  {
-    id: 2,
-    name: "Кошачий свитер",
-    vendor: "Усатые",
-    price: 1000,
-    imageUrl: "../assets/pic3.jpg",
-  },
-  {
-    id: 3,
-    name: "Миска рыбка",
-    vendor: "Банановая рыба",
-    price: 660,
-    imageUrl: "../assets/pic3.jpg",
-  },
-  {
-    id: 4,
-    name: "Миска космокот",
-    vendor: "Усатые",
-    price: 660,
-    imageUrl: "../assets/pic3.jpg",
-  },
-  {
-    id: 5,
-    name: "Костюм для грейхаунда",
-    vendor: "Clown's costume",
-    price: 2200,
-    imageUrl: "../assets/pic3.jpg",
-  },
-  {
-    id: 6,
-    name: 'Костюм для таксы "Банан"',
-    vendor: "idk",
-    price: 0,
-    imageUrl: "../assets/pic3.jpg",
-  },
+const CATEGORIES = [
+  { id: 0, value: "clothes", label: "Одежда" },
+  { id: 1, value: "toys", label: "Игрушки" },
+  { id: 2, value: "ammunition", label: "Аммуниция" },
+  { id: 3, value: "food", label: "Еда" },
 ];
 
 export function Catalog() {
+  const [items, setItems] = useState<Item[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const [petTypeId, setPetTypeId] = useState<number | undefined>();
+  const [categoryId, setCategoryId] = useState<number | undefined>();
+  const [maxPrice, setMaxPrice] = useState<number | undefined>();
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await getItems({
+          pet_type_id: petTypeId,
+          category_id: categoryId,
+          max_price: maxPrice,
+        });
+        setItems(response.data);
+      } catch (err: unknown) {
+        console.log(err);
+
+        setError("Ошибка при загрузке товаров");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchItems();
+  }, [petTypeId, categoryId, maxPrice]);
+
+  if (loading) {
+    return (
+      <div>
+        <Header isLoggedIn />
+        <div className="flex items-center justify-center h-screen">
+          <p className="text-2xl font-semibold">Загрузка...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div>
+        <Header isLoggedIn />
+        <div className="flex items-center justify-center h-screen">
+          <p className="text-2xl font-semibold">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <Header isLoggedIn />
       <div className="static m-4">
         <div className="flex items-center space-x-4 mb-4">
-          <select className="rounded-[15px] p-2 text-[#574C3A] bg-[#EDE6DB] font-medium w-[260px]">
+          <select
+            className="rounded-[15px] p-2 text-[#574C3A] bg-[#EDE6DB] font-medium w-[260px]"
+            onChange={(e) => {
+              setPetTypeId(e.target.value ? Number(e.target.value) : undefined);
+            }}
+            value={petTypeId ?? ""}
+          >
             <option value="">Тип питомца</option>{" "}
             {PET_TYPES.map((opt) => (
-              <option key={opt.value} value={opt.value}>
+              <option key={opt.id} value={opt.id}>
                 {opt.label}
               </option>
             ))}
           </select>
 
-          <select className="rounded-[15px] p-2 text-[#574C3A] bg-[#EDE6DB] font-medium w-[260px]">
+          <select
+            className="rounded-[15px] p-2 text-[#574C3A] bg-[#EDE6DB] font-medium w-[260px]"
+            onChange={(e) => {
+              setCategoryId(
+                e.target.value ? Number(e.target.value) : undefined
+              );
+            }}
+            value={categoryId ?? ""}
+          >
             <option value="">Категория</option>
-            {PET_TYPES.map((opt) => (
-              <option key={opt.value} value={opt.value}>
+            {CATEGORIES.map((opt) => (
+              <option key={opt.id} value={opt.id}>
                 {opt.label}
               </option>
             ))}
           </select>
+
           <input
             type="number"
             placeholder="Цена в пределах"
+            value={maxPrice ?? ""}
+            onChange={(e) => {
+              setMaxPrice(e.target.value ? Number(e.target.value) : undefined);
+            }}
             className="rounded-[15px] p-2 text-[#574C3A] bg-[#EDE6DB] font-medium w-[260px]"
             min={0}
           />
         </div>
 
         <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-6">
-          {products.map(({ id, name, vendor, price, imageUrl }) => (
+          {items.map(({ id, name, vendor, price }) => (
             <ProductMiniature
               id={id}
               name={name}
               vendor={vendor}
               price={price}
-              imageUrl={imageUrl}
+              imageUrl="../assets/pic2.jpg"
             />
           ))}
         </div>

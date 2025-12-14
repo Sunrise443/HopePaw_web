@@ -43,7 +43,7 @@ def read_items(
     if category_id is not None:
         query = query.filter(Item.category_id == category_id)
     if pet_type_id is not None:
-        query = query.filter(Item.pet_type_id == category_id)
+        query = query.filter(Item.pet_type_id == pet_type_id)
 
     if query is None:
         raise HTTPException(status_code=404, detail="Items not found")
