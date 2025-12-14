@@ -33,7 +33,7 @@ export function About() {
   if (loading) {
     return (
       <div>
-        <Header isLoggedIn />
+        <Header />
         <div className="flex items-center justify-center h-screen">
           <p className="text-2xl font-semibold">Загрузка...</p>
         </div>
@@ -44,7 +44,7 @@ export function About() {
   if (error) {
     return (
       <div>
-        <Header isLoggedIn />
+        <Header />
         <div className="flex items-center justify-center h-screen">
           <p className="text-2xl font-semibold">{error}</p>
         </div>
@@ -54,7 +54,7 @@ export function About() {
 
   return (
     <div>
-      <Header isLoggedIn />
+      <Header />
       <div className="m-4 flex flex-col items-center">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl items-center mb-4">
           <h2 className="text-xl font-bold text-[#574C3A] text-center max-w-xl">

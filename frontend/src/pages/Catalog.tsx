@@ -53,7 +53,7 @@ export function Catalog() {
   if (loading) {
     return (
       <div>
-        <Header isLoggedIn />
+        <Header />
         <div className="flex items-center justify-center h-screen">
           <p className="text-2xl font-semibold">Загрузка...</p>
         </div>
@@ -64,7 +64,7 @@ export function Catalog() {
   if (error) {
     return (
       <div>
-        <Header isLoggedIn />
+        <Header />
         <div className="flex items-center justify-center h-screen">
           <p className="text-2xl font-semibold">{error}</p>
         </div>
@@ -74,7 +74,7 @@ export function Catalog() {
 
   return (
     <div>
-      <Header isLoggedIn />
+      <Header />
       <div className="static m-4">
         <div className="flex items-center space-x-4 mb-4">
           <select

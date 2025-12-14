@@ -38,7 +38,7 @@ const basketItems: BusketItem[] = [
 export default function Basket() {
   return (
     <div>
-      <Header isLoggedIn />
+      <Header />
       <h2 className="m-4 text-xl text-[#574C3A]">Корзина</h2>
 
       <div className="flex flex-col lg:flex-row justify-center gap-16 max-w-[90%] mx-auto px-4">

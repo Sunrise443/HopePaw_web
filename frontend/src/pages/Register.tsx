@@ -4,7 +4,7 @@ import { Header } from "../components/Header";
 export function Register() {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header isLoggedIn={false} />
+      <Header />
 
       <main className="flex-1">
         <div className="container mx-auto px-4 py-8 lg:py-16">

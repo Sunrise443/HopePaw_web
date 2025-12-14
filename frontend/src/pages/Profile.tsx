@@ -109,7 +109,7 @@ export function Profile() {
 
   return (
     <div>
-      <Header isLoggedIn />
+      <Header />
       <div className="static m-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-4">
           <div className="bg-[#A0937D] p-6 rounded-[30px] shadow-md">
