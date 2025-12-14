@@ -6,6 +6,7 @@ interface ProductBasketMiniatureProps {
   vendor: string;
   price: number;
   imageUrl: string;
+  onRemove: () => void;
 }
 
 export default function ProductBasketMiniature({
@@ -14,6 +15,7 @@ export default function ProductBasketMiniature({
   vendor,
   price,
   imageUrl,
+  onRemove,
 }: ProductBasketMiniatureProps) {
   return (
     <div
@@ -33,7 +35,7 @@ export default function ProductBasketMiniature({
       </div>
       <div className="flex flex-col items-end gap-4 py-3">
         <span className="text-lg font-bold text-[#EDE6DB]">{price} руб.</span>
-        <button aria-label="Корзина">
+        <button onClick={onRemove} aria-label="Корзина">
           <img className="size-7" src={BucketIcon} alt="Корзина" />
         </button>
       </div>

@@ -3,7 +3,7 @@ import { Header } from "../components/Header";
 import ProductBasketMiniature from "../components/ProductBasketMiniature";
 import MapPicture from "../assets/map.png";
 import { useEffect, useState, useMemo } from "react";
-import { getCartItems } from "../api/cart";
+import { getCartItems, removeItemFromCart } from "../api/cart";
 import type { Item } from "../types/item";
 
 export default function Basket() {
@@ -63,6 +63,16 @@ export default function Basket() {
     );
   }
 
+  const handleRemoveItem = async (itemId: number) => {
+    try {
+      await removeItemFromCart(itemId);
+      setItems((prev) => prev.filter((item) => item.id !== itemId));
+    } catch (err) {
+      console.error(err);
+      alert("Не удалось удалить товар из корзины");
+    }
+  };
+
   return (
     <div>
       <Header />
@@ -77,6 +87,7 @@ export default function Basket() {
               vendor={vendor}
               price={price}
               imageUrl="../assets/pic2.jpg"
+              onRemove={() => handleRemoveItem(id)}
             />
           ))}
           <div className="flex items-center bg-[#A0937D] text-[#EDE6DB] rounded-xl gap-3 px-4 py-2">
