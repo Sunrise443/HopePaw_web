@@ -112,8 +112,8 @@ export function Catalog() {
           <input
             type="number"
             placeholder="Цена в пределах"
-            value={maxPrice ?? ""}
-            onChange={(e) => {
+            defaultValue={maxPrice}
+            onBlur={(e) => {
               setMaxPrice(e.target.value ? Number(e.target.value) : undefined);
             }}
             className="rounded-[15px] p-2 text-[#574C3A] bg-[#EDE6DB] font-medium w-[260px]"
@@ -121,7 +121,7 @@ export function Catalog() {
           />
         </div>
 
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-6">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-6">
           {items.map(({ id, name, vendor, price }) => (
             <ProductMiniature
               id={id}
