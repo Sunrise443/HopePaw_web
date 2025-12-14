@@ -4,8 +4,10 @@ import { ProductMiniature } from "../components/ProductMiniature.tsx";
 import type { Item } from "../types/item.ts";
 import { getMyPurchases, getProfile, updateProfile } from "../api/user.ts";
 import type { UserProfile } from "../types/user.ts";
+import { useAuth } from "../context/AuthContext.tsx";
 
 export function Profile() {
+  const { logout } = useAuth();
   const [profile, setProfile] = useState<UserProfile>({
     id: 0,
     login: "",
@@ -133,6 +135,15 @@ export function Profile() {
                 Сохранить
               </button>
             )}
+            <button
+              onClick={() => {
+                logout();
+                window.location.href = "/login";
+              }}
+              className="bg-[#574C3A] text-[#EDE6DB] rounded-[15px] px-4 py-1 w-full mt-4"
+            >
+              Выйти из профиля
+            </button>
           </div>
 
           <div className="flex flex-col items-center justify-center text-center text-[#574C3A]">
