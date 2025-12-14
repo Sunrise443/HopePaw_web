@@ -2,6 +2,9 @@ import { ActionButton } from "../components/ActionButtons";
 import { Header } from "../components/Header";
 import ProductBasketMiniature from "../components/ProductBasketMiniature";
 import MapPicture from "../assets/map.png";
+import { useEffect, useState } from "react";
+import { getCartItems } from "../api/cart";
+import type { Item } from "../types/item";
 
 type BusketItem = {
   id: number;
@@ -36,6 +39,52 @@ const basketItems: BusketItem[] = [
 ];
 
 export default function Basket() {
+  const [items, setItems] = useState<Item[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await getCartItems();
+        setItems(response.data);
+      } catch (err: unknown) {
+        console.log(err);
+
+        setError("Ошибка при загрузке товаров");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchItems();
+  }, []);
+
+  if (loading) {
+    return (
+      <div>
+        <Header />
+        <div className="flex items-center justify-center h-screen">
+          <p className="text-2xl font-semibold">Загрузка...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div>
+        <Header />
+        <div className="flex items-center justify-center h-screen">
+          <p className="text-2xl font-semibold">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <Header />
@@ -43,13 +92,13 @@ export default function Basket() {
 
       <div className="flex flex-col lg:flex-row justify-center gap-16 max-w-[90%] mx-auto px-4">
         <div className="grid gap-4 flex-1">
-          {basketItems.map(({ id, name, vendor, price, imageUrl }) => (
+          {items.map(({ id, name, vendor, price }) => (
             <ProductBasketMiniature
               id={id}
               name={name}
               vendor={vendor}
               price={price}
-              imageUrl={imageUrl}
+              imageUrl="../assets/pic2.jpg"
             />
           ))}
           <div className="flex items-center bg-[#A0937D] text-[#EDE6DB] rounded-xl gap-3 px-4 py-2">
