@@ -1,109 +1,82 @@
+import { useEffect, useMemo, useState } from "react";
 import { Header } from "../components/Header.tsx";
 import { ProductMiniature } from "../components/ProductMiniature.tsx";
-
-type Product = {
-  id: number;
-  name: string;
-  vendor: string;
-  price: number;
-  imageUrl: string;
-};
-
-const products: Product[] = [
-  {
-    id: 1,
-    name: "Костюм для грейхаунда",
-    vendor: "GodDog",
-    price: 5500,
-    imageUrl: "../assets/d31497b627cfa44bc6b2283d2b27e116.jpg",
-  },
-  {
-    id: 2,
-    name: "Кошачий свитер",
-    vendor: "Усатые",
-    price: 1000,
-    imageUrl: "../assets/d31497b627cfa44bc6b2283d2b27e116.jpg",
-  },
-  {
-    id: 3,
-    name: "Миска рыбка",
-    vendor: "Банановая рыба",
-    price: 660,
-    imageUrl: "../assets/d31497b627cfa44bc6b2283d2b27e116.jpg",
-  },
-  {
-    id: 4,
-    name: "Миска космокот",
-    vendor: "Усатые",
-    price: 660,
-    imageUrl: "../assets/d31497b627cfa44bc6b2283d2b27e116.jpg",
-  },
-  {
-    id: 5,
-    name: "Костюм для грейхаунда",
-    vendor: "Clown's costume",
-    price: 2200,
-    imageUrl: "../assets/d31497b627cfa44bc6b2283d2b27e116.jpg",
-  },
-  {
-    id: 6,
-    name: 'Костюм для таксы "Банан"',
-    vendor: "idk",
-    price: 0,
-    imageUrl: "../assets/d31497b627cfa44bc6b2283d2b27e116.jpg",
-  },
-  {
-    id: 1,
-    name: "Костюм для грейхаунда",
-    vendor: "GodDog",
-    price: 5500,
-    imageUrl: "../assets/d31497b627cfa44bc6b2283d2b27e116.jpg",
-  },
-  {
-    id: 2,
-    name: "Кошачий свитер",
-    vendor: "Усатые",
-    price: 1000,
-    imageUrl: "../assets/d31497b627cfa44bc6b2283d2b27e116.jpg",
-  },
-  {
-    id: 3,
-    name: "Миска рыбка",
-    vendor: "Банановая рыба",
-    price: 660,
-    imageUrl: "../assets/d31497b627cfa44bc6b2283d2b27e116.jpg",
-  },
-  {
-    id: 4,
-    name: "Миска космокот",
-    vendor: "Усатые",
-    price: 660,
-    imageUrl: "../assets/d31497b627cfa44bc6b2283d2b27e116.jpg",
-  },
-  {
-    id: 5,
-    name: "Костюм для грейхаунда",
-    vendor: "Clown's costume",
-    price: 2200,
-    imageUrl: "../assets/d31497b627cfa44bc6b2283d2b27e116.jpg",
-  },
-  {
-    id: 6,
-    name: 'Костюм для таксы "Банан"',
-    vendor: "idk",
-    price: 0,
-    imageUrl: "../assets/d31497b627cfa44bc6b2283d2b27e116.jpg",
-  },
-];
+import type { Item } from "../types/item.ts";
+import { getMyPurchases, getProfile, updateProfile } from "../api/user.ts";
+import type { UserProfile } from "../types/user.ts";
 
 export function Profile() {
-  function saveNewProfileButton(isChangedInfo: boolean) {
-    return isChangedInfo ? (
-      <button className="bg-[#574C3A] text-[#EDE6DB] rounded-[15px] px-4 py-1 w-full mt-4">
-        Сохранить
-      </button>
-    ) : (
-      <></>
+  const [profile, setProfile] = useState<UserProfile>({
+    id: 0,
+    login: "",
+    email: "",
+    city: "",
+    money_sent: 0,
+  });
+
+  const [initialProfile, setInitialProfile] = useState<UserProfile>({
+    id: 0,
+    login: "",
+    email: "",
+    city: "",
+    money_sent: 0,
+  });
+
+  const [purchases, setPurchases] = useState<Item[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const isChanged = useMemo(() => {
+    return (
+      profile.email !== initialProfile.email ||
+      profile.city !== initialProfile.city
+    );
+  }, [profile, initialProfile]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [profileRes, purchasesRes] = await Promise.all([
+          getProfile(),
+          getMyPurchases(),
+        ]);
+
+        setProfile(profileRes.data);
+        setInitialProfile(profileRes.data);
+        setPurchases(purchasesRes.data);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleSave = async () => {
+    try {
+      const res = await updateProfile(profile.id, {
+        login: profile.login,
+        email: profile.email,
+        city: profile.city,
+      });
+
+      setProfile(res.data);
+      setInitialProfile(res.data);
+    } catch (e) {
+      console.log(e);
+      alert("Ошибка при сохранении профиля");
+    }
+  };
+
+  if (loading) {
+    return (
+      <div>
+        <Header />
+        <div className="flex items-center justify-center h-screen">
+          <p className="text-2xl font-semibold">Загрузка...</p>
+        </div>
+      </div>
     );
   }
 
@@ -111,8 +84,8 @@ export function Profile() {
     <div>
       <Header />
       <div className="static m-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-4">
-          <div className="bg-[#A0937D] p-6 rounded-[30px] shadow-md">
+        <div className="gap-24 mb-4 flex justify-center">
+          <div className="bg-[#A0937D] p-6 rounded-[30px] shadow-md w-[600px]">
             <h2 className="text-xl font-bold text-[#574C3A] mb-4">
               Личные данные
             </h2>
@@ -122,9 +95,9 @@ export function Profile() {
                   Логин
                 </label>
                 <input
-                  type="text"
-                  name="login"
-                  className="flex-1 p-2 rounded-[15px] bg-[#EDE6DB]"
+                  value={profile.login}
+                  disabled
+                  className="flex-1 p-2 rounded-[15px] bg-[#EDE6DB] opacity-70"
                 />
               </div>
               <div className="flex items-center">
@@ -132,8 +105,10 @@ export function Profile() {
                   Город
                 </label>
                 <input
-                  type="text"
-                  name="city"
+                  value={profile.city ?? ""}
+                  onChange={(e) =>
+                    setProfile({ ...profile, city: e.target.value })
+                  }
                   className="flex-1 p-2 rounded-[15px] bg-[#EDE6DB]"
                 />
               </div>
@@ -142,31 +117,44 @@ export function Profile() {
                   Эл. почта
                 </label>
                 <input
-                  type="email"
-                  name="email"
+                  value={profile.email}
+                  onChange={(e) =>
+                    setProfile({ ...profile, email: e.target.value })
+                  }
                   className="flex-1 p-2 rounded-[15px] bg-[#EDE6DB]"
                 />
               </div>
             </div>
-            {saveNewProfileButton(true)}
+            {isChanged && (
+              <button
+                onClick={handleSave}
+                className="bg-[#574C3A] text-[#EDE6DB] rounded-[15px] px-4 py-1 w-full mt-4"
+              >
+                Сохранить
+              </button>
+            )}
           </div>
 
           <div className="flex flex-col items-center justify-center text-center text-[#574C3A]">
             <h2 className="text-xl font-semibold mb-2">
               Вы уже отправили приютам:
             </h2>
-            <p className="text-3xl font-bold">2 601 руб.</p>
+            <p className="text-3xl font-bold">
+              {profile.money_sent.toLocaleString()} руб.
+            </p>
           </div>
         </div>
-        <h1 className="text-[#574C3A] mb-4 ml-4">Покупки</h1>
+        <h1 className="text-[#574C3A] mb-4 ml-4 font-bold">Покупки</h1>
+
         <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-6">
-          {products.map(({ id, name, vendor, price, imageUrl }) => (
+          {purchases.map((item) => (
             <ProductMiniature
-              id={id}
-              name={name}
-              vendor={vendor}
-              price={price}
-              imageUrl={imageUrl}
+              key={item.id}
+              id={item.id}
+              name={item.name}
+              vendor={item.vendor}
+              price={item.price}
+              imageUrl="../assets/pic2.jpg"
             />
           ))}
         </div>

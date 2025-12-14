@@ -4,6 +4,7 @@ from database import get_db
 from deps import get_current_user, require_self
 from fastapi import APIRouter, Depends, HTTPException
 from models.user import User
+from schemas.items import ItemCardRead
 from schemas.users import UserRead, UserUpdate
 from sqlalchemy.orm import Session
 
@@ -55,3 +56,10 @@ def delete_user(
     db.delete(user_to_delete)
     db.commit()
     return user_to_delete
+
+
+@router.get("/user/purchases", response_model=List[ItemCardRead])
+def get_user_purchases(
+    current_user=Depends(get_current_user),
+):
+    return current_user.bought_items
