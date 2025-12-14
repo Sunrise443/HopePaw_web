@@ -1,11 +1,20 @@
-interface HeaderProps {
+interface ActionButtonProps {
   buttonName: string;
-  //   buttonAction: {};
+  onClick?: () => void;
+  disabled?: boolean;
 }
 
-export function ActionButton({ buttonName }: HeaderProps) {
+export function ActionButton({
+  buttonName,
+  onClick,
+  disabled = false,
+}: ActionButtonProps) {
   return (
-    <button className="bg-[#574C3A] text-[#EDE6DB] rounded-[15px] px-4 py-1">
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className="bg-[#574C3A] text-[#EDE6DB] rounded-[15px] px-4 py-1 disabled:opacity-50 disabled:cursor-not-allowed"
+    >
       {buttonName}
     </button>
   );
