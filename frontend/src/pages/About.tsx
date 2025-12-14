@@ -1,33 +1,57 @@
+import { useEffect, useState } from "react";
 import { Header } from "../components/Header.tsx";
 import { VendorCard } from "../components/VendorCard.tsx";
-
-type Vendor = {
-  id: number;
-  name: string;
-  description: string;
-};
-
-const vendors: Vendor[] = [
-  {
-    id: 1,
-    name: "Jurassic Bark",
-    description:
-      "Заказать онлайн: https://www.jurassicbark-online.co.uk/ Позвоните по номеру: +44 (0) 1353 863883",
-  },
-  {
-    id: 2,
-    name: "Кошатник",
-    description:
-      "Заказать изделие ручной работы можно в Телеграм или позвонив по номеру: +7-980-090-00-00",
-  },
-  {
-    id: 3,
-    name: "Господи помоги",
-    description: "Сто инфы о партнеере тут написано",
-  },
-];
+import type { Partner } from "../types/partner.ts";
+import { getPartners } from "../api/partners.ts";
 
 export function About() {
+  const [partners, setPartners] = useState<Partner[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await getPartners();
+        setPartners(response.data);
+        console.log(response);
+      } catch (err: unknown) {
+        console.log(err);
+
+        setError("Ошибка при загрузке партнеров");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchItems();
+  }, []);
+
+  if (loading) {
+    return (
+      <div>
+        <Header isLoggedIn />
+        <div className="flex items-center justify-center h-screen">
+          <p className="text-2xl font-semibold">Загрузка...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div>
+        <Header isLoggedIn />
+        <div className="flex items-center justify-center h-screen">
+          <p className="text-2xl font-semibold">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <Header isLoggedIn />
@@ -73,7 +97,7 @@ export function About() {
         </h1>
 
         <div className="flex flex-col items-center gap-6 w-full max-w-2xl">
-          {vendors.map(({ id, name, description }) => (
+          {partners.map(({ id, name, description }) => (
             <VendorCard
               id={id}
               name={name}
