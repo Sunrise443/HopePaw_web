@@ -1,3 +1,5 @@
+from typing import List
+
 from database import get_db
 from deps import get_current_user, require_self
 from fastapi import APIRouter, Depends, HTTPException
@@ -12,6 +14,13 @@ router = APIRouter()
 @router.get("/user/", response_model=UserRead)
 def get_user(current_user=Depends(get_current_user)):
     return current_user
+
+
+@router.get("/users/", response_model=List[UserRead])
+def get_all_users(
+    db: Session = Depends(get_db),
+):
+    return db.query(User)
 
 
 @router.put("/user/{user_id}", response_model=UserRead)
