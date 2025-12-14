@@ -2,46 +2,24 @@ import { ActionButton } from "../components/ActionButtons";
 import { Header } from "../components/Header";
 import ProductBasketMiniature from "../components/ProductBasketMiniature";
 import MapPicture from "../assets/map.png";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { getCartItems } from "../api/cart";
 import type { Item } from "../types/item";
-
-type BusketItem = {
-  id: number;
-  name: string;
-  vendor: string;
-  price: number;
-  imageUrl: string;
-};
-
-const basketItems: BusketItem[] = [
-  {
-    id: 1,
-    name: "Костюм для грейхаунда",
-    vendor: "GodDog",
-    price: 5500,
-    imageUrl: "../assets/pic4.jpg",
-  },
-  {
-    id: 2,
-    name: "Кошачий свитер",
-    vendor: "Усатые",
-    price: 1000,
-    imageUrl: "../assets/pic4.jpg",
-  },
-  {
-    id: 3,
-    name: "Миска рыбка",
-    vendor: "Банановая рыба",
-    price: 660,
-    imageUrl: "../assets/pic4.jpg",
-  },
-];
 
 export default function Basket() {
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [donation, setDonation] = useState<number>(0);
+
+  const itemsTotal = useMemo(() => {
+    return items.reduce((sum, item) => sum + item.price, 0);
+  }, [items]);
+
+  const total = useMemo(() => {
+    return itemsTotal + donation;
+  }, [itemsTotal, donation]);
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -106,6 +84,11 @@ export default function Basket() {
             <div className="flex items-center gap-2 ml-auto">
               <input
                 type="number"
+                min={0}
+                value={donation || ""}
+                onChange={(e) =>
+                  setDonation(e.target.value ? Number(e.target.value) : 0)
+                }
                 className="bg-[#EDE6DB] text-[#A0937D] rounded-lg px-3 py-1 w-32 text-right outline-none"
               />
               руб.
@@ -125,11 +108,11 @@ export default function Basket() {
             />
             <div className="flex justify-between text-[#EDE6DB] font-medium mt-3">
               <span>Итого приютам</span>
-              <span>2 000 руб.</span>
+              <span>{donation.toLocaleString()} руб.</span>
             </div>
             <div className="flex justify-between text-[#EDE6DB] font-bold mb-2">
               <span>Итого</span>
-              <span>8 800 руб.</span>
+              <span>{total.toLocaleString()} руб.</span>
             </div>
             <ActionButton buttonName="Оформить заказ" />
           </form>
