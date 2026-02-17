@@ -32,7 +32,7 @@ export default function Basket() {
       } catch (err: unknown) {
         console.log(err);
 
-        setError("Ошибка при загрузке товаров");
+        setError("Ошибка при загрузке корзины");
       } finally {
         setLoading(false);
       }

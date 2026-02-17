@@ -1,6 +1,10 @@
 import api from "./axios";
 import type { Item } from "../types/item";
-import type { UserProfile } from "../types/user";
+import type { RegisterData, UserProfile } from "../types/user";
+
+export const registerUser = (data: RegisterData) => {
+  return api.post<UserProfile>("/auth/register", data);
+};
 
 export const getProfile = () => {
   return api.get<UserProfile>("users/user/");

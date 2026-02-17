@@ -3,14 +3,14 @@ import {
   useContext,
   useEffect,
   useState,
-  ReactNode,
+  type ReactNode,
 } from "react";
 import api from "../api/axios.ts";
 
 interface AuthContextType {
   token: string | null;
   isAuthenticated: boolean;
-  login: (login: string, password: string) => Promise<void>;
+  login: (username: string, password: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -18,7 +18,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(
-    localStorage.getItem("token")
+    localStorage.getItem("token"),
   );
 
   const isAuthenticated = !!token;
@@ -31,9 +31,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [token]);
 
-  const login = async (login: string, password: string) => {
+  const login = async (username: string, password: string) => {
     const response = await api.post("/auth/login", {
-      login,
+      username,
       password,
     });
 

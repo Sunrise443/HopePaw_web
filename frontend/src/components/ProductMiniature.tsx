@@ -25,18 +25,11 @@ export function ProductMiniature({
       try {
         setAdding(true);
         await addItemToCart(Number(id));
-        alert("Товар добавлен в корзину");
       } finally {
         setAdding(false);
       }
     } catch (e: unknown) {
-      if (e.response?.status === 400) {
-        alert("Товар уже в корзине");
-      } else {
-        console.log(e);
-
-        alert("Ошибка при добавлении в корзину");
-      }
+      console.log(e);
     }
   };
 

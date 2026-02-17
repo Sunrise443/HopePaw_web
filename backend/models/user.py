@@ -1,7 +1,7 @@
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from .associations import user_cart_items, user_items
+from .associations import user_cart_items, user_items, user_roles
 from .base import Base
 
 
@@ -17,6 +17,11 @@ class User(Base):
     city: Mapped[str] = mapped_column(String, nullable=True)
     money_sent: Mapped[int] = mapped_column(Integer, default=0)
 
+    roles: Mapped[list["Role"]] = relationship(  # noqa: F821
+        secondary=user_roles,
+        back_populates="users",
+    )
+
     bought_items: Mapped[list["Item"]] = relationship(  # noqa: F821
         secondary=user_items,
         back_populates="buyers",
@@ -26,3 +31,14 @@ class User(Base):
         secondary=user_cart_items,
         back_populates="in_carts",
     )
+
+    @property
+    def is_admin(self) -> bool:
+        return any(role.name == "admin" for role in self.roles)
+
+    @property
+    def has_permission(self, *permission_names: str) -> bool:
+        user_permissions = {
+            permission.name for role in self.roles for permission in role.permissions
+        }
+        return any(perm in user_permissions for perm in permission_names)
