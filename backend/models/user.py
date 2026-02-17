@@ -31,14 +31,3 @@ class User(Base):
         secondary=user_cart_items,
         back_populates="in_carts",
     )
-
-    @property
-    def is_admin(self) -> bool:
-        return any(role.name == "admin" for role in self.roles)
-
-    @property
-    def has_permission(self, *permission_names: str) -> bool:
-        user_permissions = {
-            permission.name for role in self.roles for permission in role.permissions
-        }
-        return any(perm in user_permissions for perm in permission_names)

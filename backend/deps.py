@@ -1,4 +1,5 @@
 from core.config import ALGORITHM, SECRET_KEY
+from core.permissions import PermissionEnum
 from database import get_db
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -37,3 +38,21 @@ def require_self(user_id: int, current_user=Depends(get_current_user)):
         )
 
     return current_user
+
+
+def require_permission(permission: PermissionEnum):
+    def checker(current_user: User = Depends(get_current_user)):
+
+        user_permissions = {
+            perm.name for role in current_user.roles for perm in role.permissions
+        }
+
+        if permission.value not in user_permissions:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not enough permissions",
+            )
+
+        return current_user
+
+    return checker
