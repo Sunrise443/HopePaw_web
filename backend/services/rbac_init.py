@@ -1,7 +1,6 @@
+from core.permissions import PermissionEnum
+from models.rbac import Permission, Role
 from sqlalchemy.orm import Session
-
-from ..core.permissions import PermissionEnum
-from ..models.rbac import Permission, Role
 
 
 ROLE_MATRIX = {

@@ -1,0 +1,8 @@
+to run backend
+uvicorn main:app --reload
+
+to create admin
+python -m scripts.create_admin
+
+to run frontend
+npm run dev
