@@ -72,33 +72,38 @@ export function ProductsAdmin() {
               key={item.id}
               className="flex flex-col hover:shadow-lg transition-shadow"
             >
-              <CardHeader className="pb-2">
-                <div className="flex justify-between items-start">
-                  <CardTitle className="text-lg font-semibold line-clamp-1">
-                    {item.name}
-                  </CardTitle>
-                  <Badge variant="secondary" className="ml-2">
-                    {item.vendor}
-                  </Badge>
-                </div>
-              </CardHeader>
+              <CardContent className="p-6">
+                <div className="flex justify-between">
+                  {/* Левая часть с названием, описанием и тегами */}
+                  <div className="flex-1 pr-6">
+                    <div className="flex items-center gap-2 mb-2">
+                      <CardTitle className="text-lg font-semibold">
+                        {item.name}
+                      </CardTitle>
+                      <Badge variant="secondary">{item.vendor}</Badge>
+                    </div>
 
-              <CardContent className="flex-grow">
-                <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
-                  {item.description}
-                </p>
-                <div className="flex gap-2 mt-2">
-                  <Badge variant="outline">Категория: {item.category_id}</Badge>
-                  <Badge variant="outline">Для: {item.pet_type_id}</Badge>
-                </div>
-                <div className="mt-4 text-2xl font-bold text-primary">
-                  {item.price} ₽
+                    <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                      {item.description}
+                    </p>
+
+                    <div className="flex gap-2">
+                      <Badge variant="outline">
+                        Категория: {item.category_id}
+                      </Badge>
+                      <Badge variant="outline">Для: {item.pet_type_id}</Badge>
+                    </div>
+                  </div>
+
+                  {/* Правая часть с ценой и кнопкой */}
+                  <div className="flex flex-col items-end justify-between min-w-[120px]">
+                    <div className="text-2xl font-bold text-primary whitespace-nowrap">
+                      {item.price} ₽
+                    </div>
+                    <EditOrAddProductForm isEditing={true} item={item} />
+                  </div>
                 </div>
               </CardContent>
-
-              <CardFooter className="flex justify-between gap-2 pt-2 border-t">
-                <EditOrAddProductForm isEditing={true} item={item} />
-              </CardFooter>
             </Card>
           ))}
         </div>

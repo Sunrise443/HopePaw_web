@@ -109,15 +109,10 @@ export function EditOrAddProductForm({
         </DialogTrigger>
         <DialogContent className="sm:max-w-sm">
           <form onSubmit={handleSubmit}>
-            <DialogHeader>
+            <DialogHeader className="mb-5">
               <DialogTitle>
                 {isEditing ? "Редактировать товар" : "Добавить товар"}
               </DialogTitle>
-              <DialogDescription>
-                {isEditing
-                  ? "Измените информацию о товаре и нажмите сохранить"
-                : "Заполните информацию о новом товаре и нажмите добавить"}
-              </DialogDescription>
             </DialogHeader>
             <FieldGroup>
               <Field>
@@ -137,7 +132,7 @@ export function EditOrAddProductForm({
                   id="price"
                   name="price"
                   type="number"
-                step="100"
+                  step="100"
                   min="0"
                   defaultValue={item?.price || ""}
                   placeholder="Введите цену"
@@ -164,6 +159,7 @@ export function EditOrAddProductForm({
                       id="vendor_id"
                       name="vendor_id"
                       type="number"
+                      min="0"
                       placeholder="Введите ID партнера"
                       required
                     />
@@ -175,6 +171,7 @@ export function EditOrAddProductForm({
                       id="pet_type_id"
                       name="pet_type_id"
                       type="number"
+                      min="0"
                       placeholder="Введите ID типа питомца"
                       required
                     />
@@ -186,6 +183,7 @@ export function EditOrAddProductForm({
                       id="category_id"
                       name="category_id"
                       type="number"
+                      min="0"
                       placeholder="Введите ID категории"
                       required
                     />
@@ -194,7 +192,7 @@ export function EditOrAddProductForm({
               )}
             </FieldGroup>
 
-            <DialogFooter className={isEditing ? "justify-between" : ""}>
+            <DialogFooter className="justify-between mt-5">
               {isEditing && (
                 <Button
                   type="button"
