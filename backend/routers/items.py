@@ -68,7 +68,7 @@ def read_item(item_id: int, db: Session = Depends(get_db)):
     return item
 
 
-@router.delete("/item/{item_id}", response_model=ItemCardRead)
+@router.delete("/item/{item_id}/delete/", response_model=ItemCardRead)
 def delete_item(
     item_id: int,
     db: Session = Depends(get_db),
@@ -85,7 +85,7 @@ def delete_item(
     return item_to_delete
 
 
-@router.patch("/item/{item_id}/", response_model=ItemCardRead)
+@router.patch("/item/{item_id}/edit/", response_model=ItemCardRead)
 def edit_item(
     item_id: int,
     data: ItemUpdate,

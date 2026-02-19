@@ -8,6 +8,7 @@ class ItemBase(BaseModel):
     name: str
     price: float
     vendor_id: int
+    description: str
 
     class Config:
         from_attributes = True

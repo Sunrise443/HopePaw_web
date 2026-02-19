@@ -11,7 +11,7 @@ export const getItems = (params?: {
 };
 
 export const getItemById = (id: number) => {
-  return api.get<Item>(`/item/${id}/`);
+  return api.get<Item>(`/items/item/${id}/`);
 };
 
 export const createItem = (params: {
@@ -22,7 +22,7 @@ export const createItem = (params: {
   pet_type_id: number;
   category_id: number;
 }) => {
-  return api.post<Item>("/item/", params);
+  return api.post<Item>("/items/item/", params);
 };
 
 export const updateItem = (
@@ -33,9 +33,9 @@ export const updateItem = (
     price?: number;
   },
 ) => {
-  return api.patch<Item>(`/item/${id}/`, params);
+  return api.patch<Item>(`/items/item/${id}/edit/`, params);
 };
 
 export const deleteItem = (id: number) => {
-  return api.delete<Item>(`/item/${id}/`);
+  return api.delete<Item>(`/items/item/${id}/delete`);
 };
