@@ -11,7 +11,6 @@ export const getProfile = () => {
 };
 
 export const updateProfile = (userId: number, data: Partial<UserProfile>) => {
-  console.log(data);
   return api.put<UserProfile>(`/users/user/${userId}`, data);
 };
 
@@ -24,8 +23,6 @@ export const getAllUsers = () => {
 };
 
 export const updateUserRole = (userId: number, role: string) => {
-  console.log(role);
-
   return api.patch<UserProfile>(`/users/user/${userId}/role`, null, {
     params: {
       role,

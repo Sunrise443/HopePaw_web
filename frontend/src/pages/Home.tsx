@@ -17,7 +17,6 @@ export function Home() {
 
         const response = await getItems();
         setItems(response.data);
-        console.log(response);
       } catch (err: unknown) {
         console.log(err);
 

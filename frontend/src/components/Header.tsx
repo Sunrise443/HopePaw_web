@@ -40,7 +40,6 @@ export function Header() {
       fetchProfile();
     }
   }, [isAuthenticated]);
-  console.log(profile);
 
   const hasAdminOrManagerRole = () => {
     if (!profile.role) return false;

@@ -17,7 +17,6 @@ export function About() {
 
         const response = await getPartners();
         setPartners(response.data);
-        console.log(response);
       } catch (err: unknown) {
         console.log(err);
 

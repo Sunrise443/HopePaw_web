@@ -55,7 +55,6 @@ export function EditOrAddProductForm({
           description: formData.get("description") as string,
           price: parseFloat(formData.get("price") as string),
         });
-        console.log("edit");
       } else {
         await createItem({
           name: formData.get("name") as string,

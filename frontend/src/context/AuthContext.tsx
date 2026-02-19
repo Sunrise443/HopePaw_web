@@ -1,3 +1,4 @@
+// auth.tsx
 import {
   createContext,
   useContext,
@@ -6,10 +7,20 @@ import {
   type ReactNode,
 } from "react";
 import api from "../api/axios.ts";
+import { getProfile } from "@/api/user.ts";
+
+interface User {
+  id: number;
+  username: string;
+  role: string;
+  // добавьте другие поля пользователя по необходимости
+}
 
 interface AuthContextType {
   token: string | null;
+  user: User | null;
   isAuthenticated: boolean;
+  isAdmin: boolean;
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
 }
@@ -20,14 +31,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(
     localStorage.getItem("token"),
   );
+  const [user, setUser] = useState<User | null>(null);
 
   const isAuthenticated = !!token;
+  const isAdmin = user?.role === "admin";
 
   useEffect(() => {
     if (token) {
       localStorage.setItem("token", token);
+      getProfile();
     } else {
       localStorage.removeItem("token");
+      setUser(null);
     }
   }, [token]);
 
@@ -47,10 +62,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     setToken(null);
+    setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ token, isAuthenticated, login, logout }}>
+    <AuthContext.Provider
+      value={{ token, user, isAuthenticated, isAdmin, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );
