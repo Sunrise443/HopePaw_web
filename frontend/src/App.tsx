@@ -10,6 +10,7 @@ import { Login } from "./pages/Login";
 import { UsersAdmin } from "./pages/admin/UsersAdmin";
 import { ProductsAdmin } from "./pages/admin/ProductsAdmin";
 import { PartnersAdmin } from "./pages/admin/PartnersAdmin";
+import { Error403Page } from "./pages/errors/Error403Page";
 
 const App: React.FC = () => {
   return (
@@ -25,6 +26,7 @@ const App: React.FC = () => {
         <Route path="/users-admin" element={<UsersAdmin />} />
         <Route path="/products-admin" element={<ProductsAdmin />} />
         <Route path="/partners-admin" element={<PartnersAdmin />} />
+        <Route path="/admin" element={<Error403Page />} />
       </Routes>
     </BrowserRouter>
   );
