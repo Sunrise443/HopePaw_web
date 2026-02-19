@@ -1,10 +1,12 @@
 from typing import List, Optional
 
+from core.permissions import PermissionEnum
 from database import get_db
+from deps import require_permission
 from fastapi import APIRouter, Depends, HTTPException, Query
 from models.item import Item
 from models.user import User
-from schemas.items import ItemBase, ItemCardRead, ItemCreate
+from schemas.items import ItemBase, ItemCardRead, ItemCreate, ItemUpdate
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
@@ -13,8 +15,13 @@ router = APIRouter()
 
 
 @router.post("/item/", response_model=ItemBase)
-def create_item(item: ItemCreate, db: Session = Depends(get_db)):
-    db_item = Item(**item.dict())
+def create_item(
+    item: ItemCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_permission(PermissionEnum.PRODUCT_CREATE)),
+):
+    db_item = Item(**item.model_dump())
+
     db.add(db_item)
     db.commit()
     db.refresh(db_item)
@@ -62,7 +69,11 @@ def read_item(item_id: int, db: Session = Depends(get_db)):
 
 
 @router.delete("/item/{item_id}", response_model=ItemCardRead)
-def delete_item(item_id: int, db: Session = Depends(get_db)):
+def delete_item(
+    item_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_permission(PermissionEnum.PRODUCT_DELETE)),
+):
     item_to_delete = db.query(Item).filter(Item.id == item_id).first()
 
     if item_to_delete is None:
@@ -72,3 +83,25 @@ def delete_item(item_id: int, db: Session = Depends(get_db)):
     db.commit()
 
     return item_to_delete
+
+
+@router.patch("/item/{item_id}/", response_model=ItemCardRead)
+def edit_item(
+    item_id: int,
+    data: ItemUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_permission(PermissionEnum.PRODUCT_UPDATE)),
+):
+    item_to_update = db.query(Item).filter(Item.id == item_id).first()
+
+    if item_to_update is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+
+    update_data = data.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(item_to_update, field, value)
+
+    db.commit()
+    db.refresh(item_to_update)
+
+    return item_to_update

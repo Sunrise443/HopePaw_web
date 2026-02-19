@@ -50,7 +50,22 @@ def require_permission(permission: PermissionEnum):
         if permission.value not in user_permissions:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Not enough permissions",
+                detail="You don't have permissions to access this page",
+            )
+
+        return current_user
+
+    return checker
+
+
+def require_role(required_role: str):
+    def checker(current_user: User = Depends(get_current_user)):
+        user_roles = {role.name for role in current_user.roles}
+
+        if required_role not in user_roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Role '{required_role}' required",
             )
 
         return current_user

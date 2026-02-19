@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel
 
 
@@ -18,3 +20,9 @@ class ItemCardRead(ItemBase):
 class ItemCreate(ItemCardRead):
     pet_type_id: int
     category_id: int
+
+
+class ItemUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    price: Optional[float] = None

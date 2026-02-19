@@ -1,8 +1,8 @@
 from typing import List
 
 from database import get_db
-from deps import get_current_user, require_self
-from fastapi import APIRouter, Depends, HTTPException
+from deps import get_current_user, require_role
+from fastapi import APIRouter, Depends, HTTPException, status
 from models.user import User
 from schemas.items import ItemCardRead
 from schemas.users import UserRead, UserUpdate
@@ -19,7 +19,7 @@ def get_user(current_user=Depends(get_current_user)):
 
 @router.get("/users/", response_model=List[UserRead])
 def get_all_users(
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db), current_user=Depends(require_role("admin"))
 ):
     return db.query(User)
 
@@ -29,8 +29,17 @@ def update_user(
     user_id: int,
     user: UserUpdate,
     db: Session = Depends(get_db),
-    current_user=Depends(require_self),
+    current_user=Depends(get_current_user),
 ):
+    try:
+        require_role("admin")(current_user)
+    except HTTPException:
+        if current_user.id != user_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You can only update your own account",
+            )
+
     db_user = db.query(User).filter(User.id == user_id).first()
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -47,8 +56,17 @@ def update_user(
 def delete_user(
     user_id: int,
     db: Session = Depends(get_db),
-    current_user=Depends(require_self),
+    current_user=Depends(get_current_user),
 ):
+    try:
+        require_role("admin")(current_user)
+    except HTTPException:
+        if current_user.id != user_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You can only delete your own account",
+            )
+
     user_to_delete = db.query(User).filter(User.id == user_id).first()
     if user_to_delete is None:
         raise HTTPException(status_code=404, detail="User not found")

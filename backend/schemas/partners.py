@@ -11,3 +11,8 @@ class PartnerBase(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class PartnerUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
