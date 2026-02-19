@@ -7,6 +7,9 @@ import { About } from "./pages/About";
 import Basket from "./pages/Basket";
 import { Register } from "./pages/Register";
 import { Login } from "./pages/Login";
+import { UsersAdmin } from "./pages/admin/UsersAdmin";
+import { ProductsAdmin } from "./pages/admin/ProductsAdmin";
+import { PartnersAdmin } from "./pages/admin/PartnersAdmin";
 
 const App: React.FC = () => {
   return (
@@ -19,6 +22,9 @@ const App: React.FC = () => {
         <Route path="/basket" element={<Basket />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/users-admin" element={<UsersAdmin />} />
+        <Route path="/products-admin" element={<ProductsAdmin />} />
+        <Route path="/partners-admin" element={<PartnersAdmin />} />
       </Routes>
     </BrowserRouter>
   );

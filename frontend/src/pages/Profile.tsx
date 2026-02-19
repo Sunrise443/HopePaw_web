@@ -14,6 +14,7 @@ export function Profile() {
     email: "",
     city: "",
     money_sent: 0,
+    roles: [],
   });
 
   const [initialProfile, setInitialProfile] = useState<UserProfile>({
@@ -22,6 +23,7 @@ export function Profile() {
     email: "",
     city: "",
     money_sent: 0,
+    roles: [],
   });
 
   const [purchases, setPurchases] = useState<Item[]>([]);

@@ -4,6 +4,12 @@ export interface UserProfile {
   email: string;
   city?: string;
   money_sent: number;
+  roles: Role[];
+}
+
+export interface Role {
+  id: number;
+  name: string;
 }
 
 export interface RegisterData {

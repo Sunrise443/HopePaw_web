@@ -1,6 +1,7 @@
 from typing import List, Optional
 
 from pydantic import BaseModel
+from schemas.roles import RoleRead
 
 from .items import ItemCardRead
 
@@ -18,6 +19,7 @@ class UserRead(UserBase):
     bought_items: List[ItemCardRead] = []
     email: str
     city: Optional[str] = None
+    roles: List[RoleRead] = []
 
 
 class UserCreate(UserBase):
