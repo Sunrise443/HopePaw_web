@@ -15,7 +15,7 @@ router = APIRouter()
 
 @router.post("/partners/", response_model=PartnerBase)
 def create_partner(
-    partner: PartnerBase,
+    partner: PartnerUpdate,
     db: Session = Depends(get_db),
     current_user: User = Depends(require_permission(PermissionEnum.PARTNER_CREATE)),
 ):
