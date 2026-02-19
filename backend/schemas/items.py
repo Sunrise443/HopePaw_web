@@ -18,7 +18,11 @@ class ItemCardRead(ItemBase):
     description: str
 
 
-class ItemCreate(ItemCardRead):
+class ItemCreate(BaseModel):
+    name: str
+    price: float
+    vendor_id: int
+    description: str
     pet_type_id: int
     category_id: int
 
