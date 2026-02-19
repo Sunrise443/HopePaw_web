@@ -18,3 +18,11 @@ export const updateProfile = (userId: number, data: Partial<UserProfile>) => {
 export const getMyPurchases = () => {
   return api.get<Item[]>("/users/user/purchases");
 };
+
+export const getAllUsers = () => {
+  return api.get<UserProfile[]>("/users/users/");
+};
+
+export const updateUserRole = (userId: number, role: string) => {
+  return api.put<UserProfile>(`/users/user/${userId}/role`, { role });
+};

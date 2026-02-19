@@ -58,7 +58,7 @@ export function PartnersAdmin() {
       <div className="p-4">
         <EditOrAddPartnerForm isEditing={false} onSuccess={fetchPartners} />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 mt-4 lg:grid-cols-3 gap-4">
           {partners.map((partner) => (
             <Card
               key={partner.id}

@@ -76,6 +76,33 @@ def delete_user(
     return user_to_delete
 
 
+@router.put("/user/{user_id}/role", response_model=UserRead)
+def change_user_role(
+    user_id: int,
+    new_role: str,
+    db: Session = Depends(get_db),
+    current_user=Depends(require_role("admin")),
+):
+    db_user = db.query(User).filter(User.id == user_id).first()
+    if db_user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+        )
+
+    if current_user.id == user_id and new_role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You cannot remove your own admin privileges",
+        )
+
+    db_user.role = new_role
+
+    db.commit()
+    db.refresh(db_user)
+
+    return db_user
+
+
 @router.get("/user/purchases", response_model=List[ItemCardRead])
 def get_user_purchases(
     current_user=Depends(get_current_user),
