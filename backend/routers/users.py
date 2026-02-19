@@ -79,7 +79,7 @@ def delete_user(
 @router.put("/user/{user_id}/role", response_model=UserRead)
 def change_user_role(
     user_id: int,
-    new_role: str,
+    role: str,
     db: Session = Depends(get_db),
     current_user=Depends(require_role("admin")),
 ):
@@ -89,13 +89,13 @@ def change_user_role(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
         )
 
-    if current_user.id == user_id and new_role != "admin":
+    if current_user.id == user_id and role != "admin":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="You cannot remove your own admin privileges",
         )
 
-    db_user.role = new_role
+    db_user.role = role
 
     db.commit()
     db.refresh(db_user)

@@ -23,7 +23,7 @@ export function Header() {
     email: "",
     city: "",
     money_sent: 0,
-    roles: [],
+    role: undefined,
   });
 
   useEffect(() => {
@@ -40,19 +40,18 @@ export function Header() {
       fetchProfile();
     }
   }, [isAuthenticated]);
+  console.log(profile);
 
   const hasAdminOrManagerRole = () => {
-    if (!profile.roles || profile.roles.length === 0) return false;
+    if (!profile.role) return false;
 
-    return profile.roles.some(
-      (role) => role.name === "admin" || role.name === "manager",
-    );
+    return profile.role.name === "admin" || profile.role.name === "manager";
   };
 
   const hasAdminRole = () => {
-    if (!profile.roles || profile.roles.length === 0) return false;
+    if (!profile.role) return false;
 
-    return profile.roles.some((role) => role.name === "admin");
+    return profile.role.name === "admin";
   };
 
   return (

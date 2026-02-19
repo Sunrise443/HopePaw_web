@@ -19,7 +19,7 @@ class UserRead(UserBase):
     bought_items: List[ItemCardRead] = []
     email: str
     city: Optional[str] = None
-    roles: List[RoleRead] = []
+    role: RoleRead
 
 
 class UserCreate(UserBase):

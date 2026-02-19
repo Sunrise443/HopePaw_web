@@ -24,5 +24,5 @@ export const getAllUsers = () => {
 };
 
 export const updateUserRole = (userId: number, role: string) => {
-  return api.put<UserProfile>(`/users/user/${userId}/role`, { role });
+  return api.put<UserProfile>(`/users/user/${userId}/role`, role);
 };

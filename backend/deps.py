@@ -42,10 +42,7 @@ def require_self(user_id: int, current_user=Depends(get_current_user)):
 
 def require_permission(permission: PermissionEnum):
     def checker(current_user: User = Depends(get_current_user)):
-
-        user_permissions = {
-            perm.name for role in current_user.roles for perm in role.permissions
-        }
+        user_permissions = {perm.name for perm in current_user.role.permissions}
 
         if permission.value not in user_permissions:
             raise HTTPException(
@@ -60,9 +57,7 @@ def require_permission(permission: PermissionEnum):
 
 def require_role(required_role: str):
     def checker(current_user: User = Depends(get_current_user)):
-        user_roles = {role.name for role in current_user.roles}
-
-        if required_role not in user_roles:
+        if current_user.role.name != required_role:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail=f"Role '{required_role}' required",

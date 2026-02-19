@@ -22,9 +22,9 @@ def create_admin():
         login=login,
         hashed_password=hash_password(password),
         is_active=True,
+        role_id=admin_role.id,
+        role=admin_role,
     )
-
-    user.roles.append(admin_role)
 
     db.add(user)
     db.commit()

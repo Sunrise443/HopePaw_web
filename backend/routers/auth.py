@@ -4,6 +4,7 @@ from core.config import ACCESS_TOKEN_EXPIRE_MINUTES
 from database import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
+from models.rbac import Role
 from models.user import User
 from schemas.auth import Token
 from schemas.users import UserCreate, UserRead
@@ -20,6 +21,8 @@ def register(user_in: UserCreate, db: Session = Depends(get_db)):
     if existing:
         raise HTTPException(status_code=400, detail="User already exists")
 
+    role = db.query(Role).filter_by(name="user").first()
+
     user = User(
         login=user_in.login,
         hashed_password=hash_password(user_in.password),
@@ -27,6 +30,7 @@ def register(user_in: UserCreate, db: Session = Depends(get_db)):
         email=user_in.email,
         city=user_in.city,
         money_sent=0,
+        role=role,
     )
     db.add(user)
     db.commit()
