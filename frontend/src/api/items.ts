@@ -13,3 +13,29 @@ export const getItems = (params?: {
 export const getItemById = (id: number) => {
   return api.get<Item>(`/item/${id}/`);
 };
+
+export const createItem = (params: {
+  name: string;
+  description: string;
+  price: number;
+  vendor_id: number;
+  pet_type_id: number;
+  category_id: number;
+}) => {
+  return api.post<Item>("/item/", params);
+};
+
+export const updateItem = (
+  id: number,
+  params: {
+    name?: string;
+    description?: string;
+    price?: number;
+  },
+) => {
+  return api.patch<Item>(`/item/${id}/`, params);
+};
+
+export const deleteItem = (id: number) => {
+  return api.delete<Item>(`/item/${id}/`);
+};

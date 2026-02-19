@@ -1,6 +1,8 @@
 import { getItems } from "@/api/items";
+import { EditOrAddProductForm } from "@/components/EditOrAddProductForm";
 import { Header } from "@/components/Header";
 import type { Item } from "@/types/item";
+
 import { useEffect, useState } from "react";
 
 export function ProductsAdmin() {
@@ -19,7 +21,6 @@ export function ProductsAdmin() {
         console.log(response);
       } catch (err: unknown) {
         console.log(err);
-
         setError("Ошибка при загрузке товаров");
       } finally {
         setLoading(false);
@@ -50,9 +51,22 @@ export function ProductsAdmin() {
       </div>
     );
   }
+
   return (
     <div>
       <Header />
+      <div className="p-4">
+        <EditOrAddProductForm isEditing={false} />
+
+        <div className="mt-4 space-y-2">
+          {items.map((item) => (
+            <div key={item.id} className="flex items-center gap-2">
+              <span>{item.name}</span>
+              <EditOrAddProductForm isEditing={true} item={item} />
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
