@@ -24,5 +24,14 @@ export const getAllUsers = () => {
 };
 
 export const updateUserRole = (userId: number, role: string) => {
-  return api.put<UserProfile>(`/users/user/${userId}/role`, role);
+  console.log(role);
+
+  return api.patch<UserProfile>(`/users/user/${userId}/role`, null, {
+    params: {
+      role,
+    },
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
 };

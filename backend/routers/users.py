@@ -3,6 +3,7 @@ from typing import List
 from database import get_db
 from deps import get_current_user, require_role
 from fastapi import APIRouter, Depends, HTTPException, status
+from models.rbac import Role
 from models.user import User
 from schemas.items import ItemCardRead
 from schemas.users import UserRead, UserUpdate
@@ -76,7 +77,7 @@ def delete_user(
     return user_to_delete
 
 
-@router.put("/user/{user_id}/role", response_model=UserRead)
+@router.patch("/user/{user_id}/role", response_model=UserRead)
 def change_user_role(
     user_id: int,
     role: str,
@@ -95,7 +96,9 @@ def change_user_role(
             detail="You cannot remove your own admin privileges",
         )
 
-    db_user.role = role
+    full_role = db.query(Role).filter_by(name=role).first()
+
+    db_user.role = full_role
 
     db.commit()
     db.refresh(db_user)
