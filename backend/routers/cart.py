@@ -1,7 +1,7 @@
+from crud import get_item_by_id
 from database import get_db
 from deps import get_current_user
 from fastapi import APIRouter, Depends, HTTPException
-from models.item import Item
 from models.user import User
 from sqlalchemy.orm import Session
 
@@ -15,7 +15,7 @@ def add_item_to_cart(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    item = db.query(Item).filter(Item.id == item_id).first()
+    item = get_item_by_id(db, item_id)
 
     if not item:
         raise HTTPException(status_code=404, detail="Item not found")
@@ -44,7 +44,7 @@ def remove_item_from_cart(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    item = db.query(Item).filter(Item.id == item_id).first()
+    item = get_item_by_id(db, item_id)
 
     if not item or item not in current_user.cart:
         raise HTTPException(status_code=404, detail="Item not in cart")

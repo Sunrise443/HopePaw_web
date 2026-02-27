@@ -1,9 +1,9 @@
 from typing import List
 
+from crud import get_full_role_by_name, get_user_by_id
 from database import get_db
 from deps import get_current_user, require_role
 from fastapi import APIRouter, Depends, HTTPException, status
-from models.rbac import Role
 from models.user import User
 from schemas.items import ItemCardRead
 from schemas.users import UserRead, UserUpdate
@@ -84,7 +84,7 @@ def change_user_role(
     db: Session = Depends(get_db),
     current_user=Depends(require_role("admin")),
 ):
-    db_user = db.query(User).filter(User.id == user_id).first()
+    db_user = get_user_by_id(db, user_id)
     if db_user is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
@@ -96,7 +96,7 @@ def change_user_role(
             detail="You cannot remove your own admin privileges",
         )
 
-    full_role = db.query(Role).filter_by(name=role).first()
+    full_role = get_full_role_by_name(db, role)
 
     db_user.role = full_role
 

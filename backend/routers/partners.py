@@ -1,6 +1,7 @@
 from typing import List
 
 from core.permissions import PermissionEnum
+from crud import get_partner_by_id
 from database import get_db
 from deps import require_permission
 from fastapi import APIRouter, Depends, HTTPException
@@ -43,7 +44,7 @@ def delete_partner(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_permission(PermissionEnum.PARTNER_DELETE)),
 ):
-    partner_to_delete = db.query(Partner).filter(Partner.id == partner_id).first()
+    partner_to_delete = get_partner_by_id(db, partner_id)
 
     if partner_to_delete is None:
         raise HTTPException(status_code=404, detail="Partner not found")
@@ -61,7 +62,7 @@ def edit_partner(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_permission(PermissionEnum.PARTNER_UPDATE)),
 ):
-    partner_to_update = db.query(Partner).filter(Partner.id == partner_id).first()
+    partner_to_update = get_partner_by_id(db, partner_id)
 
     if partner_to_update is None:
         raise HTTPException(status_code=404, detail="Partner not found")

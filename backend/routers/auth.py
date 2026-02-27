@@ -1,10 +1,10 @@
 from datetime import timedelta
 
 from core.config import ACCESS_TOKEN_EXPIRE_MINUTES
+from crud import get_full_role_by_name, get_user_by_username
 from database import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from models.rbac import Role
 from models.user import User
 from schemas.auth import Token
 from schemas.users import UserCreate, UserRead
@@ -21,7 +21,7 @@ def register(user_in: UserCreate, db: Session = Depends(get_db)):
     if existing:
         raise HTTPException(status_code=400, detail="User already exists")
 
-    role = db.query(Role).filter_by(name="user").first()
+    role = get_full_role_by_name(db, "user")
 
     user = User(
         login=user_in.login,
@@ -43,7 +43,7 @@ def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db),
 ):
-    user = db.query(User).filter(User.login == form_data.username).first()
+    user = get_user_by_username(db, form_data.username)
     if not user or not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials"

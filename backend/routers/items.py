@@ -1,6 +1,7 @@
 from typing import List, Optional
 
 from core.permissions import PermissionEnum
+from crud import get_item_by_id
 from database import get_db
 from deps import require_permission
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -62,7 +63,7 @@ def read_items(
 
 @router.get("/item/{item_id}/", response_model=ItemCardRead)
 def read_item(item_id: int, db: Session = Depends(get_db)):
-    item = db.query(Item).filter(Item.id == item_id).first()
+    item = get_item_by_id(db, item_id)
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
     return item
@@ -74,7 +75,7 @@ def delete_item(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_permission(PermissionEnum.PRODUCT_DELETE)),
 ):
-    item_to_delete = db.query(Item).filter(Item.id == item_id).first()
+    item_to_delete = get_item_by_id(db, item_id)
 
     if item_to_delete is None:
         raise HTTPException(status_code=404, detail="Item not found")
@@ -92,7 +93,7 @@ def edit_item(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_permission(PermissionEnum.PRODUCT_UPDATE)),
 ):
-    item_to_update = db.query(Item).filter(Item.id == item_id).first()
+    item_to_update = get_item_by_id(db, item_id)
 
     if item_to_update is None:
         raise HTTPException(status_code=404, detail="Item not found")

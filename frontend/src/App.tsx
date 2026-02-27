@@ -28,7 +28,10 @@ const App: React.FC = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/error-403" element={<Error403Page />} />
           <Route path="/profile" element={<Profile />} />
-          <Route
+          <Route path="/users-admin" element={<UsersAdmin />} />
+          <Route path="/products-admin" element={<ProductsAdmin />} />
+          <Route path="/partners-admin" element={<PartnersAdmin />} />
+          {/* <Route
             path="/users-admin"
             element={
               <ProtectedRoute requiredRoles={["admin", "manager"]}>
@@ -51,7 +54,7 @@ const App: React.FC = () => {
                 <PartnersAdmin />
               </ProtectedRoute>
             }
-          />
+          /> */}
         </Routes>
       </BrowserRouter>
     </AuthProvider>
