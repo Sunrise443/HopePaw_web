@@ -4,7 +4,7 @@ from datetime import timedelta
 
 from core.config import REFRESH_TOKEN_EXPIRE_DAYS
 from database import get_db
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Cookie, Depends, HTTPException, Response, status
 from fastapi.security import OAuth2PasswordRequestForm
 from jose import JWTError
 from models.token import RefreshToken
@@ -51,6 +51,7 @@ def register(user_in: UserCreate, db: Session = Depends(get_db)):
 
 @router.post("/login", response_model=Token)
 def login(
+    response: Response,
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db),
 ):
@@ -60,29 +61,43 @@ def login(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials"
         )
 
-    access_token = create_access_token(data={"sub": str(user.id)})
-    refresh_token = create_refresh_token(data={"sub": str(user.id)})
+    access_token = create_access_token({"sub": str(user.id)})
+    refresh_token = create_refresh_token({"sub": str(user.id)})
 
     refresh_token_hash = hash_token(refresh_token)
 
-    jti = str(uuid.uuid4())
-
-    db_refresh_token = RefreshToken(
-        user_id=user.id,
-        token_hash=refresh_token_hash,
-        jti=jti,
-        expires_at=datetime.datetime.now()
-        + datetime.timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),
+    db.add(
+        RefreshToken(
+            user_id=user.id,
+            token_hash=refresh_token_hash,
+            jti=str(uuid.uuid4()),
+            expires_at=datetime.datetime.now()
+            + datetime.timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),
+        )
     )
-
-    db.add(db_refresh_token)
     db.commit()
 
-    return {"access_token": access_token, "refresh_token": refresh_token}
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        httponly=True,
+        secure=False,  # True if https
+        samesite="lax",
+        max_age=REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
+    )
+
+    return {"access_token": access_token}
 
 
 @router.post("/refresh", response_model=Token)
-def refresh(refresh_token: str, db: Session = Depends(get_db)):
+def refresh(
+    response: Response,
+    refresh_token: str = Cookie(None),
+    db: Session = Depends(get_db),
+):
+    if not refresh_token:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="No refresh token")
+
     try:
         payload = verify_token(refresh_token, expected_type="refresh")
     except JWTError:
@@ -107,21 +122,16 @@ def refresh(refresh_token: str, db: Session = Depends(get_db)):
         db.delete(db_token)
         db.commit()
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="Token expired")
-
     db.delete(db_token)
 
     new_access = create_access_token({"sub": user_id})
     new_refresh = create_refresh_token({"sub": user_id})
 
-    new_hash = hash_token(new_refresh)
-
-    jti = str(uuid.uuid4())
-
     db.add(
         RefreshToken(
             user_id=user_id,
-            token_hash=new_hash,
-            jti=jti,
+            token_hash=hash_token(new_refresh),
+            jti=str(uuid.uuid4()),
             expires_at=datetime.datetime.now()
             + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),
         )
@@ -129,4 +139,19 @@ def refresh(refresh_token: str, db: Session = Depends(get_db)):
 
     db.commit()
 
-    return {"access_token": new_access, "refresh_token": new_refresh}
+    response.set_cookie(
+        key="refresh_token",
+        value=new_refresh,
+        httponly=True,
+        secure=False,
+        samesite="lax",
+        max_age=REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
+    )
+
+    return {"access_token": new_access}
+
+
+@router.post("/logout")
+def logout(response: Response):
+    response.delete_cookie("refresh_token")
+    return {"message": "Logged out"}

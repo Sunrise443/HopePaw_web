@@ -5,6 +5,7 @@ import type { Item } from "../types/item.ts";
 import { getMyPurchases, getProfile, updateProfile } from "../api/user.ts";
 import type { UserProfile } from "../types/user.ts";
 import { useAuth } from "../context/AuthContext.tsx";
+import { useNavigate } from "react-router-dom";
 
 export function Profile() {
   const { logout } = useAuth();
@@ -28,6 +29,8 @@ export function Profile() {
 
   const [purchases, setPurchases] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   const isChanged = useMemo(() => {
     return (
@@ -140,7 +143,7 @@ export function Profile() {
             <button
               onClick={() => {
                 logout();
-                window.location.href = "/login";
+                navigate("/login");
               }}
               className="bg-[#574C3A] text-[#EDE6DB] rounded-[15px] px-4 py-1 w-full mt-4"
             >

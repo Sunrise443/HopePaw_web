@@ -27,8 +27,8 @@ export const updateUserRole = (userId: number, role: string) => {
     params: {
       role,
     },
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
+    // headers: {
+    //   Authorization: `Bearer ${localStorage.getItem("token")}`,
+    // },
   });
 };

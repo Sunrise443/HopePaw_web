@@ -5,6 +5,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError
 from models.user import User
 from services.auth import verify_token
+from services.crud import get_user_by_id
 from sqlalchemy.orm import Session
 
 
@@ -19,16 +20,16 @@ def get_current_user(
         user_id = payload.get("sub")
         if user_id is None:
             raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token"
+                status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token1"
             )
     except JWTError:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid toke2n"
         )
 
-    user = db.query(User).get(int(user_id))
+    user = get_user_by_id(db, int(user_id))
     if not user:
-        raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="Invalid token3")
 
     return user
 
