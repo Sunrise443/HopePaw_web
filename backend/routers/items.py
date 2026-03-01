@@ -1,13 +1,13 @@
 from typing import List, Optional
 
 from core.permissions import PermissionEnum
-from crud import get_item_by_id
 from database import get_db
 from deps import require_permission
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from models.item import Item
 from models.user import User
 from schemas.items import ItemBase, ItemCardRead, ItemCreate, ItemUpdate
+from services.crud import get_item_by_id
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
@@ -54,7 +54,7 @@ def read_items(
         query = query.filter(Item.pet_type_id == pet_type_id)
 
     if query is None:
-        raise HTTPException(status_code=404, detail="Items not found")
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Items not found")
 
     items = query.all()
 
@@ -65,7 +65,7 @@ def read_items(
 def read_item(item_id: int, db: Session = Depends(get_db)):
     item = get_item_by_id(db, item_id)
     if item is None:
-        raise HTTPException(status_code=404, detail="Item not found")
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Item not found")
     return item
 
 
@@ -78,7 +78,9 @@ def delete_item(
     item_to_delete = get_item_by_id(db, item_id)
 
     if item_to_delete is None:
-        raise HTTPException(status_code=404, detail="Item not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Item not found"
+        )
 
     db.delete(item_to_delete)
     db.commit()
@@ -96,7 +98,9 @@ def edit_item(
     item_to_update = get_item_by_id(db, item_id)
 
     if item_to_update is None:
-        raise HTTPException(status_code=404, detail="Item not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Item not found"
+        )
 
     update_data = data.model_dump(exclude_unset=True)
     for field, value in update_data.items():

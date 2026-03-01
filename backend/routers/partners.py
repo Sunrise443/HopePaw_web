@@ -1,13 +1,13 @@
 from typing import List
 
 from core.permissions import PermissionEnum
-from crud import get_partner_by_id
 from database import get_db
 from deps import require_permission
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from models.partner import Partner
 from models.user import User
 from schemas.partners import PartnerBase, PartnerUpdate
+from services.crud import get_partner_by_id
 from sqlalchemy.orm import Session
 
 
@@ -33,7 +33,7 @@ def get_partners(db: Session = Depends(get_db)):
     query = db.query(Partner)
 
     if query is None:
-        raise HTTPException(status_code=404, detail="Partners not found")
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Partners not found")
 
     return query.all()
 
@@ -47,7 +47,9 @@ def delete_partner(
     partner_to_delete = get_partner_by_id(db, partner_id)
 
     if partner_to_delete is None:
-        raise HTTPException(status_code=404, detail="Partner not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Partner not found"
+        )
 
     db.delete(partner_to_delete)
     db.commit()
@@ -65,7 +67,9 @@ def edit_partner(
     partner_to_update = get_partner_by_id(db, partner_id)
 
     if partner_to_update is None:
-        raise HTTPException(status_code=404, detail="Partner not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Partner not found"
+        )
 
     update_data = data.model_dump(exclude_unset=True)
     for field, value in update_data.items():

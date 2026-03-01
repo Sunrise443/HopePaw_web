@@ -1,9 +1,8 @@
 import datetime
+import uuid
 from datetime import timedelta
 
-import jwt
-from core.config import ALGORITHM, REFRESH_TOKEN_EXPIRE_DAYS, SECRET_KEY
-from crud import get_full_role_by_name, get_user_by_username
+from core.config import REFRESH_TOKEN_EXPIRE_DAYS
 from database import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
@@ -18,7 +17,9 @@ from services.auth import (
     hash_password,
     hash_token,
     verify_password,
+    verify_token,
 )
+from services.crud import get_full_role_by_name, get_user_by_username
 from sqlalchemy.orm import Session
 
 
@@ -64,9 +65,12 @@ def login(
 
     refresh_token_hash = hash_token(refresh_token)
 
+    jti = str(uuid.uuid4())
+
     db_refresh_token = RefreshToken(
         user_id=user.id,
         token_hash=refresh_token_hash,
+        jti=jti,
         expires_at=datetime.datetime.now()
         + datetime.timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),
     )
@@ -79,18 +83,16 @@ def login(
 
 @router.post("/refresh", response_model=Token)
 def refresh(refresh_token: str, db: Session = Depends(get_db)):
-
     try:
-        payload = jwt.decode(refresh_token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = verify_token(refresh_token, expected_type="refresh")
     except JWTError:
-        raise HTTPException(status_code=401, detail="Invalid token")
-
-    if payload.get("type") != "refresh":
-        raise HTTPException(status_code=401, detail="Invalid token type")
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
     user_id = payload.get("sub")
     if not user_id:
-        raise HTTPException(status_code=401, detail="Invalid token payload")
+        raise HTTPException(
+            status.HTTP_401_UNAUTHORIZED, detail="Invalid token payload"
+        )
 
     token_hash = hash_token(refresh_token)
 
@@ -99,12 +101,12 @@ def refresh(refresh_token: str, db: Session = Depends(get_db)):
     )
 
     if not db_token:
-        raise HTTPException(status_code=401, detail="Token revoked")
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="Token revoked")
 
     if db_token.expires_at < datetime.datetime.now():
         db.delete(db_token)
         db.commit()
-        raise HTTPException(status_code=401, detail="Token expired")
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="Token expired")
 
     db.delete(db_token)
 
@@ -113,10 +115,13 @@ def refresh(refresh_token: str, db: Session = Depends(get_db)):
 
     new_hash = hash_token(new_refresh)
 
+    jti = str(uuid.uuid4())
+
     db.add(
         RefreshToken(
             user_id=user_id,
             token_hash=new_hash,
+            jti=jti,
             expires_at=datetime.datetime.now()
             + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),
         )

@@ -1,6 +1,5 @@
 import hashlib
 from datetime import datetime, timedelta
-from http.client import HTTPException
 
 from core.config import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
@@ -8,6 +7,7 @@ from core.config import (
     REFRESH_TOKEN_EXPIRE_DAYS,
     SECRET_KEY,
 )
+from fastapi import HTTPException, status
 from jose import jwt
 from passlib.context import CryptContext
 
@@ -51,7 +51,9 @@ def verify_token(token: str, expected_type: str):
     payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
 
     if payload.get("type") != expected_type:
-        raise HTTPException(status_code=401, detail="Invalid token type")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token type"
+        )
 
     return payload
 

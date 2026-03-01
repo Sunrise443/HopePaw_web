@@ -1,12 +1,12 @@
 from typing import List
 
-from crud import get_full_role_by_name, get_user_by_id
 from database import get_db
 from deps import get_current_user, require_role
 from fastapi import APIRouter, Depends, HTTPException, status
 from models.user import User
 from schemas.items import ItemCardRead
 from schemas.users import UserRead, UserUpdate
+from services.crud import get_full_role_by_name, get_user_by_id
 from sqlalchemy.orm import Session
 
 
@@ -43,7 +43,7 @@ def update_user(
 
     db_user = db.query(User).filter(User.id == user_id).first()
     if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="User not found")
 
     for field, value in user.dict(exclude_unset=True).items():
         setattr(db_user, field, value)
@@ -70,7 +70,9 @@ def delete_user(
 
     user_to_delete = db.query(User).filter(User.id == user_id).first()
     if user_to_delete is None:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+        )
 
     db.delete(user_to_delete)
     db.commit()
