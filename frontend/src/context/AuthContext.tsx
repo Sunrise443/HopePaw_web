@@ -1,3 +1,4 @@
+// context/AuthContext.tsx
 import {
   createContext,
   useContext,
@@ -28,30 +29,25 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
 
-  const navigate = useNavigate();
-  const isAuthenticated = !!accessToken;
+  const isAuthenticated = !!user; // теперь зависит от состояния user
   const isAdmin = user?.role?.name === "admin";
 
+  // При монтировании пытаемся восстановить пользователя
   useEffect(() => {
-    const fetchUser = async () => {
-      if (!accessToken) {
-        setUser(null);
-        return;
-      }
+    const initAuth = async () => {
+      if (!accessToken) return;
 
       try {
         const { data } = await getProfile();
         setUser(data);
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error fetching profile:", error);
         setUser(null);
-        if (error.response?.status === 401) {
-          setAccessToken(null);
-        }
+        setAccessToken(null);
       }
     };
 
-    fetchUser();
+    initAuth();
   }, []);
 
   const login = async (username: string, password: string) => {
@@ -66,16 +62,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     });
 
     setAccessToken(response.data.access_token);
+
+    // Декодируем JWT, чтобы получить данные пользователя
     setUser(jwtDecode(response.data.access_token));
   };
 
   const logout = () => {
     setAccessToken(null);
     setUser(null);
-
-    if (window.location.pathname !== "/login") {
-      navigate("/login");
-    }
+    window.location.href = "/login";
   };
 
   return (
@@ -89,8 +84,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
 export function useAuth() {
   const ctx = useContext(AuthContext);
-  if (!ctx) {
-    throw new Error("useAuth must be used within AuthProvider");
-  }
+  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
   return ctx;
 }
