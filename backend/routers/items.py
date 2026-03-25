@@ -36,6 +36,7 @@ def read_items(
     category_id: Optional[int] = Query(None, description="Filter items by category"),
     pet_type_id: Optional[int] = Query(None, description="Filter items by pet_type"),
     sort_by_popularity: bool = Query(False, description="Sort by number of buyers"),
+    sort_type: Optional[str] = Query(None, description="Sort by this sort type"),
 ):
     query = db.query(Item)
 
@@ -45,6 +46,11 @@ def read_items(
             .group_by(Item.id)
             .order_by(func.count(User.user_items.c.user_id).desc())
         )
+
+    if sort_type == "price_asc":
+        query = query.order_by(Item.price.asc())
+    elif sort_type == "price_desc":
+        query = query.order_by(Item.price.desc())
 
     if max_price is not None:
         query = query.filter(Item.price <= max_price)

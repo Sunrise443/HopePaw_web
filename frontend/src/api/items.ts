@@ -6,6 +6,7 @@ export const getItems = (params?: {
   category_id?: number;
   pet_type_id?: number;
   sort_by_popularity?: boolean;
+  sort_type?: string;
 }) => {
   return api.get<Item[]>("/items/items/", { params });
 };

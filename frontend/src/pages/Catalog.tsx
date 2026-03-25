@@ -17,6 +17,11 @@ const CATEGORIES = [
   { id: 3, value: "food", label: "Еда" },
 ];
 
+const SORT_TYPE = [
+  { id: 0, value: "price_asc", label: "Сначала дешевые" },
+  { id: 0, value: "price_desc", label: "Сначала дорогие" },
+];
+
 export function Catalog() {
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -25,6 +30,7 @@ export function Catalog() {
   const [petTypeId, setPetTypeId] = useState<number | undefined>();
   const [categoryId, setCategoryId] = useState<number | undefined>();
   const [maxPrice, setMaxPrice] = useState<number | undefined>();
+  const [sortType, setSortType] = useState<string | undefined>();
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -36,6 +42,7 @@ export function Catalog() {
           pet_type_id: petTypeId,
           category_id: categoryId,
           max_price: maxPrice,
+          sort_type: sortType,
         });
         setItems(response.data);
       } catch (err: unknown) {
@@ -48,7 +55,7 @@ export function Catalog() {
     };
 
     fetchItems();
-  }, [petTypeId, categoryId, maxPrice]);
+  }, [petTypeId, categoryId, maxPrice, sortType]);
 
   if (loading) {
     return (
@@ -96,7 +103,7 @@ export function Catalog() {
             className="rounded-[15px] p-2 text-[#574C3A] bg-[#EDE6DB] font-medium w-[260px]"
             onChange={(e) => {
               setCategoryId(
-                e.target.value ? Number(e.target.value) : undefined
+                e.target.value ? Number(e.target.value) : undefined,
               );
             }}
             value={categoryId ?? ""}
@@ -119,6 +126,21 @@ export function Catalog() {
             className="rounded-[15px] p-2 text-[#574C3A] bg-[#EDE6DB] font-medium w-[260px]"
             min={0}
           />
+
+          <select
+            className="rounded-[15px] p-2 text-[#574C3A] bg-[#EDE6DB] font-medium w-[260px]"
+            onChange={(e) => {
+              setSortType(e.target.value ? String(e.target.value) : undefined);
+            }}
+            value={sortType ?? ""}
+          >
+            <option value="">Сортировать</option>{" "}
+            {SORT_TYPE.map((opt) => (
+              <option key={opt.id} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-6">
