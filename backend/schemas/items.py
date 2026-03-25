@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -31,3 +31,11 @@ class ItemUpdate(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
     price: Optional[float] = None
+
+
+class PaginatedItemsResponse(BaseModel):
+    items: List[ItemBase]
+    total: int
+    page: int
+    per_page: int
+    total_pages: int

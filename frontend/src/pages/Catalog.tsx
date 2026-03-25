@@ -19,18 +19,26 @@ const CATEGORIES = [
 
 const SORT_TYPE = [
   { id: 0, value: "price_asc", label: "Сначала дешевые" },
-  { id: 0, value: "price_desc", label: "Сначала дорогие" },
+  { id: 1, value: "price_desc", label: "Сначала дорогие" },
 ];
 
 export function Catalog() {
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const [totalItems, setTotalItems] = useState<number>(0);
 
   const [petTypeId, setPetTypeId] = useState<number | undefined>();
   const [categoryId, setCategoryId] = useState<number | undefined>();
   const [maxPrice, setMaxPrice] = useState<number | undefined>();
   const [sortType, setSortType] = useState<string | undefined>();
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [perPage] = useState<number>(8);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [petTypeId, categoryId, maxPrice, sortType]);
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -43,8 +51,13 @@ export function Catalog() {
           category_id: categoryId,
           max_price: maxPrice,
           sort_type: sortType,
+          page: currentPage,
+          per_page: perPage,
         });
-        setItems(response.data);
+
+        setItems(response.data.items);
+        setTotalPages(response.data.total_pages);
+        setTotalItems(response.data.total);
       } catch (err: unknown) {
         console.log(err);
 
@@ -55,7 +68,12 @@ export function Catalog() {
     };
 
     fetchItems();
-  }, [petTypeId, categoryId, maxPrice, sortType]);
+  }, [petTypeId, categoryId, maxPrice, sortType, currentPage, perPage]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   if (loading) {
     return (
@@ -91,7 +109,7 @@ export function Catalog() {
             }}
             value={petTypeId ?? ""}
           >
-            <option value="">Тип питомца</option>{" "}
+            <option value="">Тип питомца</option>
             {PET_TYPES.map((opt) => (
               <option key={opt.id} value={opt.id}>
                 {opt.label}
@@ -134,7 +152,7 @@ export function Catalog() {
             }}
             value={sortType ?? ""}
           >
-            <option value="">Сортировать</option>{" "}
+            <option value="">Сортировать</option>
             {SORT_TYPE.map((opt) => (
               <option key={opt.id} value={opt.value}>
                 {opt.label}
@@ -146,6 +164,7 @@ export function Catalog() {
         <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-6">
           {items.map(({ id, name, vendor, price }) => (
             <ProductMiniature
+              key={id}
               id={id}
               name={name}
               vendor={vendor}
@@ -154,6 +173,88 @@ export function Catalog() {
             />
           ))}
         </div>
+
+        {totalPages > 1 && (
+          <div className="fixed bottom-0 left-0 right-0">
+            <div className="flex space-x-1 justify-center items-center space-x-2 mt-8 mb-4">
+              {(() => {
+                const pages = [];
+                const maxVisible = 5;
+                let startPage = Math.max(
+                  1,
+                  currentPage - Math.floor(maxVisible / 2),
+                );
+                const endPage = Math.min(
+                  totalPages,
+                  startPage + maxVisible - 1,
+                );
+
+                if (endPage - startPage + 1 < maxVisible) {
+                  startPage = Math.max(1, endPage - maxVisible + 1);
+                }
+
+                if (startPage > 1) {
+                  pages.push(
+                    <button
+                      key={1}
+                      onClick={() => handlePageChange(1)}
+                      className="px-3 py-2 rounded-[15px] bg-[#EDE6DB] text-[#574C3A] font-medium hover:bg-[#E0D6C8] transition-colors"
+                    >
+                      1
+                    </button>,
+                  );
+                  if (startPage > 2) {
+                    pages.push(
+                      <span
+                        key="dots-start"
+                        className="px-2 py-2 text-[#574C3A]"
+                      >
+                        ...
+                      </span>,
+                    );
+                  }
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
+                  pages.push(
+                    <button
+                      key={i}
+                      onClick={() => handlePageChange(i)}
+                      className={`px-3 py-2 rounded-[15px] font-medium transition-colors ${
+                        currentPage === i
+                          ? "bg-[#574C3A] text-white"
+                          : "bg-[#EDE6DB] text-[#574C3A] hover:bg-[#E0D6C8]"
+                      }`}
+                    >
+                      {i}
+                    </button>,
+                  );
+                }
+
+                if (endPage < totalPages) {
+                  if (endPage < totalPages - 1) {
+                    pages.push(
+                      <span key="dots-end" className="px-2 py-2 text-[#574C3A]">
+                        ...
+                      </span>,
+                    );
+                  }
+                  pages.push(
+                    <button
+                      key={totalPages}
+                      onClick={() => handlePageChange(totalPages)}
+                      className="px-3 py-2 rounded-[15px] bg-[#EDE6DB] text-[#574C3A] font-medium hover:bg-[#E0D6C8] transition-colors"
+                    >
+                      {totalPages}
+                    </button>,
+                  );
+                }
+
+                return pages;
+              })()}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

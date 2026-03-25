@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 
 from core.permissions import PermissionEnum
 from database import get_db
@@ -6,7 +6,13 @@ from deps import require_permission
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from models.item import Item
 from models.user import User
-from schemas.items import ItemBase, ItemCardRead, ItemCreate, ItemUpdate
+from schemas.items import (
+    ItemBase,
+    ItemCardRead,
+    ItemCreate,
+    ItemUpdate,
+    PaginatedItemsResponse,
+)
 from services.crud import get_item_by_id
 from sqlalchemy import func
 from sqlalchemy.orm import Session
@@ -29,7 +35,7 @@ def create_item(
     return db_item
 
 
-@router.get("/items/", response_model=List[ItemBase])
+@router.get("/items/", response_model=PaginatedItemsResponse)
 def read_items(
     db: Session = Depends(get_db),
     max_price: Optional[int] = Query(None, description="Filter items by price"),
@@ -37,6 +43,8 @@ def read_items(
     pet_type_id: Optional[int] = Query(None, description="Filter items by pet_type"),
     sort_by_popularity: bool = Query(False, description="Sort by number of buyers"),
     sort_type: Optional[str] = Query(None, description="Sort by this sort type"),
+    page: int = Query(1, ge=1, description="Page number"),
+    per_page: int = Query(12, ge=1, le=100, description="Items per page"),
 ):
     query = db.query(Item)
 
@@ -59,12 +67,21 @@ def read_items(
     if pet_type_id is not None:
         query = query.filter(Item.pet_type_id == pet_type_id)
 
-    if query is None:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Items not found")
+    total = query.count()
 
-    items = query.all()
+    offset = (page - 1) * per_page
+    items = query.offset(offset).limit(per_page).all()
 
-    return items
+    if not items and page > 1:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Page not found")
+
+    return PaginatedItemsResponse(
+        items=items,
+        total=total,
+        page=page,
+        per_page=per_page,
+        total_pages=(total + per_page - 1) // per_page,
+    )
 
 
 @router.get("/item/{item_id}/", response_model=ItemCardRead)
