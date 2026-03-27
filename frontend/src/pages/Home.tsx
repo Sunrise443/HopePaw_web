@@ -16,7 +16,7 @@ export function Home() {
         setError(null);
 
         const response = await getItems();
-        setItems(response.data);
+        setItems(response.data.items);
       } catch (err: unknown) {
         console.log(err);
 

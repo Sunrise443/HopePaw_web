@@ -1,7 +1,7 @@
 import api from "./axios";
 import type { Item } from "../types/item";
 
-interface PaginatedResponse {
+export interface PaginatedResponse {
   items: Item[];
   total: number;
   page: number;
