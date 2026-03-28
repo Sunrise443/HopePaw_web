@@ -2,11 +2,7 @@ import { getItems } from "@/api/items";
 import { EditOrAddProductForm } from "@/components/EditOrAddProductForm";
 import { Header } from "@/components/Header";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import type { Item } from "@/types/item";
 
 import { useEffect, useState } from "react";
@@ -23,7 +19,7 @@ export function ProductsAdmin() {
         setError(null);
 
         const response = await getItems();
-        setItems(response.data);
+        setItems(response.data.items);
         console.log(response);
       } catch (err: unknown) {
         console.log(err);
