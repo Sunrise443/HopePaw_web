@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
 
+from core.minio_init import init_bucket
 from database import SessionLocal, engine
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -16,6 +17,7 @@ async def lifespan(app: FastAPI):
     print("Starting up: Init DB")
     db = SessionLocal()
     init_rbac(db)
+    init_bucket()
     db.close()
 
     yield

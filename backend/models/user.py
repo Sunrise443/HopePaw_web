@@ -29,3 +29,7 @@ class User(Base):
         secondary=user_cart_items,
         back_populates="in_carts",
     )
+
+    files: Mapped[list["FileModel"]] = relationship(  # noqa: F821
+        back_populates="owner", cascade="all, delete-orphan"
+    )
