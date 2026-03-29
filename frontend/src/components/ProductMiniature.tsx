@@ -20,8 +20,6 @@ export function ProductMiniature({
 }: ProductMiniatureProps) {
   const [adding, setAdding] = useState(false);
 
-  const imageToShowUrl = imageUrl || "../assets/pic2.jpg";
-
   const handleAddToCart = async () => {
     try {
       try {
@@ -42,7 +40,7 @@ export function ProductMiniature({
     >
       {imageUrl ? (
         <img
-          src={new URL(imageToShowUrl, import.meta.url).href}
+          src={new URL(imageUrl, import.meta.url).href}
           alt={name}
           className="rounded-[15px] object-cover w-full h-full mb-3"
         />

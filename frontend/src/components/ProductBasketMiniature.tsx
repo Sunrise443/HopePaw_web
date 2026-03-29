@@ -5,7 +5,7 @@ interface ProductBasketMiniatureProps {
   name: string;
   vendor: string;
   price: number;
-  imageUrl: string;
+  imageUrl: string | null | undefined;
   onRemove: () => void;
 }
 
@@ -23,11 +23,17 @@ export default function ProductBasketMiniature({
       className="flex bg-[#A0937D] rounded-2xl min-w-[450px] p-2 justify-between"
     >
       <div className="flex gap-3">
-        <img
-          src={new URL(imageUrl, import.meta.url).href}
-          alt={name}
-          className="w-[100px] h-full object-cover rounded-xl"
-        />
+        {imageUrl ? (
+          <img
+            src={new URL(imageUrl, import.meta.url).href}
+            alt={name}
+            className="w-[100px] h-full object-cover rounded-xl"
+          />
+        ) : (
+          <div className="w-[100px] h-full rounded-xl bg-[#EDE6DB] flex items-center justify-center">
+            <span className="text-[#574C3A] text-sm">Нет фото</span>
+          </div>
+        )}
         <div className="py-2 text-[#EDE6DB]">
           <div className="text-xl">{name}</div>
           <div className="text-xs">{vendor}</div>

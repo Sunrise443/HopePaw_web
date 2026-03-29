@@ -1,8 +1,12 @@
+from typing import List
+
 from database import get_db
 from deps import get_current_user
 from fastapi import APIRouter, Depends, HTTPException, status
 from models.user import User
+from schemas.items import ItemBase
 from services.crud import get_item_by_id
+from services.minio import FileService
 from sqlalchemy.orm import Session
 
 
@@ -31,11 +35,20 @@ def add_item_to_cart(
     return {"status": "ok"}
 
 
-@router.get("/items/")
+@router.get("/items/", response_model=List[ItemBase])
 def get_cart_items(
+    db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    return current_user.cart
+    items = current_user.cart
+
+    file_service = FileService(db)
+
+    for item in items:
+        if item.file:
+            item.photo_url = file_service.get_presigned_url_public(item.file.id)
+
+    return items
 
 
 @router.delete("/items/{item_id}")

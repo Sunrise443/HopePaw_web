@@ -80,13 +80,13 @@ export default function Basket() {
 
       <div className="flex flex-col lg:flex-row justify-center gap-16 max-w-[90%] mx-auto px-4">
         <div className="grid gap-4 flex-1">
-          {items.map(({ id, name, vendor, price }) => (
+          {items.map(({ id, name, vendor, price, photo_url }) => (
             <ProductBasketMiniature
               id={id}
               name={name}
               vendor={vendor}
               price={price}
-              imageUrl="../assets/pic2.jpg"
+              imageUrl={photo_url}
               onRemove={() => handleRemoveItem(id)}
             />
           ))}
