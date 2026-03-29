@@ -1,3 +1,5 @@
+from typing import Optional
+
 from sqlalchemy import Float, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -27,4 +29,11 @@ class Item(Base):
     in_carts: Mapped[list["User"]] = relationship(  # noqa: F821
         secondary=user_cart_items,
         back_populates="cart",
+    )
+
+    file_id: Mapped[Optional[str]] = mapped_column(
+        ForeignKey("files.id"), nullable=True, index=True
+    )
+    file: Mapped[Optional["FileModel"]] = relationship(  # noqa: F821
+        "FileModel", back_populates="item", uselist=False
     )

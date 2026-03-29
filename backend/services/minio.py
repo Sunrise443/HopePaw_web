@@ -1,4 +1,5 @@
 import uuid
+from datetime import timedelta
 from io import BytesIO
 
 from core.config import MINIO_BUCKET
@@ -71,6 +72,31 @@ class FileService:
             expires=timedelta(minutes=5),
         )
         return url
+
+    def get_presigned_url_public(self, file_id: str) -> str:
+        db_file = self.db.query(FileModel).filter(FileModel.id == file_id).first()
+        if not db_file:
+            raise HTTPException(status_code=404, detail="File not found")
+
+        from datetime import timedelta
+
+        return minio_client.presigned_get_object(
+            bucket_name=MINIO_BUCKET,
+            object_name=db_file.key,
+            expires=timedelta(minutes=15),
+        )
+
+    def get_presigned_urls(self, file_ids: list[str]) -> dict[str, str]:
+        files = self.db.query(FileModel).filter(FileModel.id.in_(file_ids)).all()
+
+        urls = {}
+        for file in files:
+            urls[file.id] = minio_client.presigned_get_object(
+                bucket_name=MINIO_BUCKET,
+                object_name=file.key,
+                expires=timedelta(minutes=5),
+            )
+        return urls
 
     def delete_file(self, file_id: str, owner: User):
         db_file = (

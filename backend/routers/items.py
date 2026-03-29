@@ -3,7 +3,7 @@ from typing import Optional
 from core.permissions import PermissionEnum
 from database import get_db
 from deps import require_permission
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
 from models.item import Item
 from models.user import User
 from schemas.items import (
@@ -14,6 +14,7 @@ from schemas.items import (
     PaginatedItemsResponse,
 )
 from services.crud import get_item_by_id
+from services.minio import FileService
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
@@ -22,12 +23,23 @@ router = APIRouter()
 
 
 @router.post("/item/", response_model=ItemBase)
-def create_item(
-    item: ItemCreate,
+async def create_item(
+    item: ItemCreate = Depends(),
+    photo: Optional[UploadFile] = File(None),
     db: Session = Depends(get_db),
     current_user: User = Depends(require_permission(PermissionEnum.PRODUCT_CREATE)),
 ):
-    db_item = Item(**item.model_dump())
+    file_id = None
+
+    if photo and photo.filename:
+        file_service = FileService(db)
+        uploaded_file = await file_service.upload_file(photo, current_user)
+        file_id = uploaded_file.id
+
+    db_item = Item(
+        **item.model_dump(),
+        file_id=file_id,
+    )
 
     db.add(db_item)
     db.commit()
@@ -75,6 +87,12 @@ def read_items(
     if not items and page > 1:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Page not found")
 
+    file_service = FileService(db)
+
+    for item in items:
+        if item.file:
+            item.photo_url = file_service.get_presigned_url_public(item.file.id)
+
     return PaginatedItemsResponse(
         items=items,
         total=total,
@@ -89,6 +107,11 @@ def read_item(item_id: int, db: Session = Depends(get_db)):
     item = get_item_by_id(db, item_id)
     if item is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Item not found")
+
+    if item.file:
+        file_service = FileService(db)
+        item.photo_url = file_service.get_presigned_url_public(item.file.id)
+
     return item
 
 

@@ -17,3 +17,7 @@ class FileModel(Base):
         ForeignKey("users.id"), nullable=True, index=True
     )
     owner: Mapped["User"] = relationship(back_populates="files")  # noqa: F821
+
+    item: Mapped["Item"] = relationship(  # noqa: F821
+        "Item", back_populates="file", uselist=False
+    )
