@@ -25,15 +25,33 @@ export const getItemById = (id: number) => {
   return api.get<Item>(`/items/item/${id}/`);
 };
 
-export const createItem = (params: {
+export const createItem = (data: {
   name: string;
   description: string;
   price: number;
   vendor_id: number;
   pet_type_id: number;
   category_id: number;
+  photo?: File | null;
 }) => {
-  return api.post<Item>("/items/item/", params);
+  const formData = new FormData();
+
+  formData.append("name", data.name);
+  formData.append("description", data.description);
+  formData.append("price", data.price.toString());
+  formData.append("vendor_id", data.vendor_id.toString());
+  formData.append("pet_type_id", data.pet_type_id.toString());
+  formData.append("category_id", data.category_id.toString());
+
+  if (data.photo) {
+    formData.append("photo", data.photo);
+  }
+
+  return api.post<Item>("/items/item/", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 };
 
 export const updateItem = (

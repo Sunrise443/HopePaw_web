@@ -1,6 +1,5 @@
 from typing import List, Optional
 
-from fastapi import Form
 from pydantic import BaseModel
 
 
@@ -19,18 +18,6 @@ class ItemBase(BaseModel):
 
 class ItemCardRead(ItemBase):
     description: str
-
-
-class ItemCreate(BaseModel):
-    name: str = Form(...)
-    price: float = Form(...)
-    vendor_id: int = Form(...)
-    description: str = Form(...)
-    pet_type_id: int = Form(...)
-    category_id: int = Form(...)
-
-    class Config:
-        extra = "ignore"
 
 
 class ItemUpdate(BaseModel):

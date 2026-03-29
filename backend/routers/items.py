@@ -3,13 +3,21 @@ from typing import Optional
 from core.permissions import PermissionEnum
 from database import get_db
 from deps import require_permission
-from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    Form,
+    HTTPException,
+    Query,
+    UploadFile,
+    status,
+)
 from models.item import Item
 from models.user import User
 from schemas.items import (
     ItemBase,
     ItemCardRead,
-    ItemCreate,
     ItemUpdate,
     PaginatedItemsResponse,
 )
@@ -24,7 +32,12 @@ router = APIRouter()
 
 @router.post("/item/", response_model=ItemBase)
 async def create_item(
-    item: ItemCreate = Depends(),
+    name: str = Form(...),
+    price: float = Form(...),
+    vendor_id: int = Form(...),
+    description: str = Form(...),
+    pet_type_id: int = Form(...),
+    category_id: int = Form(...),
     photo: Optional[UploadFile] = File(None),
     db: Session = Depends(get_db),
     current_user: User = Depends(require_permission(PermissionEnum.PRODUCT_CREATE)),
@@ -37,7 +50,12 @@ async def create_item(
         file_id = uploaded_file.id
 
     db_item = Item(
-        **item.model_dump(),
+        name=name,
+        description=description,
+        price=price,
+        vendor_id=vendor_id,
+        pet_type_id=pet_type_id,
+        category_id=category_id,
         file_id=file_id,
     )
 

@@ -41,6 +41,31 @@ export function EditOrAddProductForm({
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (!file.type.startsWith("image/")) {
+        alert("Пожалуйста, выберите изображение");
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        // 10 MB
+        alert("Файл слишком большой (макс. 10 МБ)");
+        return;
+      }
+
+      setSelectedFile(file);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -63,13 +88,16 @@ export function EditOrAddProductForm({
           vendor_id: parseInt(formData.get("vendor_id") as string),
           pet_type_id: parseInt(formData.get("pet_type_id") as string),
           category_id: parseInt(formData.get("category_id") as string),
+          photo: selectedFile,
         });
       }
 
       setIsOpen(false);
+      setSelectedFile(null);
+      setPhotoPreview(null);
       onSuccess?.();
     } catch (error) {
-      console.error("Ошибка при сохранении товара:", error);
+      console.error("Error saving item:", error);
     } finally {
       setIsLoading(false);
     }
@@ -185,6 +213,26 @@ export function EditOrAddProductForm({
                       placeholder="Введите ID категории"
                       required
                     />
+                  </Field>
+                  <Field>
+                    <Label htmlFor="photo">Фото товара</Label>
+                    <Input
+                      id="photo"
+                      name="photo"
+                      type="file"
+                      accept="image/jpeg,image/png"
+                      onChange={handleFileChange}
+                      disabled={isLoading}
+                    />
+                    {photoPreview && (
+                      <div className="mt-2">
+                        <img
+                          src={photoPreview}
+                          alt="Preview"
+                          className="w-full h-32 object-cover rounded-md border"
+                        />
+                      </div>
+                    )}
                   </Field>
                 </>
               )}

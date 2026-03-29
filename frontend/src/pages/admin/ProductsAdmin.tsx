@@ -67,9 +67,28 @@ export function ProductsAdmin() {
               className="flex flex-col hover:shadow-lg transition-shadow"
             >
               <CardContent className="p-6">
-                <div className="flex justify-between">
-                  {/* Левая часть с названием, описанием и тегами */}
-                  <div className="flex-1 pr-6">
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0">
+                    {item.photo_url ? (
+                      <img
+                        src={item.photo_url}
+                        alt={item.name}
+                        className="w-24 h-24 object-cover rounded-lg border"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src =
+                            "/placeholder-image.png";
+                        }}
+                      />
+                    ) : (
+                      <div className="w-24 h-24 bg-muted rounded-lg flex items-center justify-center">
+                        <span className="text-muted-foreground text-xs">
+                          Нет фото
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-2">
                       <CardTitle className="text-lg font-semibold">
                         {item.name}
@@ -89,7 +108,7 @@ export function ProductsAdmin() {
                     </div>
                   </div>
 
-                  {/* Правая часть с ценой и кнопкой */}
+                  {/* 🔹 Цена и кнопки */}
                   <div className="flex flex-col items-end justify-between min-w-[120px]">
                     <div className="text-2xl font-bold text-primary whitespace-nowrap">
                       {item.price} ₽
