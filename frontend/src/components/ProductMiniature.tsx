@@ -8,7 +8,7 @@ interface ProductMiniatureProps {
   name: string;
   vendor: string;
   price: number;
-  imageUrl: string;
+  imageUrl: string | null | undefined;
 }
 
 export function ProductMiniature({
@@ -19,6 +19,8 @@ export function ProductMiniature({
   imageUrl,
 }: ProductMiniatureProps) {
   const [adding, setAdding] = useState(false);
+
+  const imageToShowUrl = imageUrl || "../assets/pic2.jpg";
 
   const handleAddToCart = async () => {
     try {
@@ -38,11 +40,17 @@ export function ProductMiniature({
       key={id}
       className="bg-[#A0937D] rounded-[30px] w-full h-full p-3 flex flex-col"
     >
-      <img
-        src={new URL(imageUrl, import.meta.url).href}
-        alt={name}
-        className="rounded-[15px] object-cover w-full h-full mb-3"
-      />
+      {imageUrl ? (
+        <img
+          src={new URL(imageToShowUrl, import.meta.url).href}
+          alt={name}
+          className="rounded-[15px] object-cover w-full h-full mb-3"
+        />
+      ) : (
+        <div className="rounded-[15px] w-full h-full mb-3 bg-[#EDE6DB] flex items-center justify-center">
+          <span className="text-[#574C3A] text-sm">Тут пока что нет фото</span>
+        </div>
+      )}
       <div className="text-s text-[#574C3A] mb-1">
         {name}
         <br />

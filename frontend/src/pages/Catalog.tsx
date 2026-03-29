@@ -27,7 +27,6 @@ export function Catalog() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [totalPages, setTotalPages] = useState<number>(1);
-  const [totalItems, setTotalItems] = useState<number>(0);
 
   const [petTypeId, setPetTypeId] = useState<number | undefined>();
   const [categoryId, setCategoryId] = useState<number | undefined>();
@@ -57,7 +56,6 @@ export function Catalog() {
 
         setItems(response.data.items);
         setTotalPages(response.data.total_pages);
-        setTotalItems(response.data.total);
       } catch (err: unknown) {
         console.log(err);
 
@@ -162,14 +160,14 @@ export function Catalog() {
         </div>
 
         <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-6">
-          {items.map(({ id, name, vendor, price }) => (
+          {items.map(({ id, name, vendor, price, photo_url }) => (
             <ProductMiniature
               key={id}
               id={id}
               name={name}
               vendor={vendor}
               price={price}
-              imageUrl="../assets/pic2.jpg"
+              imageUrl={photo_url}
             />
           ))}
         </div>

@@ -60,13 +60,14 @@ export function Home() {
         </h2>
         <p className="mb-4 text-sm">Популярные товары</p>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-6">
-          {items.map(({ id, name, vendor, price }) => (
+          {items.map(({ id, name, vendor, price, photo_url }) => (
             <ProductMiniature
+              key={id}
               id={id}
               name={name}
               vendor={vendor}
               price={price}
-              imageUrl="../assets/pic2.jpg"
+              imageUrl={photo_url}
             />
           ))}
         </div>
