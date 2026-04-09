@@ -7,6 +7,7 @@ from .auth import router as auth_router
 from .cart import router as cart_router
 from .files import router as files_router
 from .seo import router as seo_router
+from .weather import router as weather_router
 
 router = APIRouter()
 
@@ -17,3 +18,4 @@ router.include_router(auth_router, prefix="/auth", tags=["auth"])
 router.include_router(cart_router, prefix="/cart", tags=["cart"])
 router.include_router(files_router, prefix="/files", tags=["files"])
 router.include_router(seo_router, prefix="/seo", tags=["seo"])
+router.include_router(weather_router, prefix="/weather", tags=["weather"])

@@ -7,6 +7,7 @@ import type { UserProfile } from "../types/user.ts";
 import { useAuth } from "../context/AuthContext.tsx";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
+import { WeatherWidget } from "@/components/WeatherWidget.tsx";
 
 export function Profile() {
   const { logout } = useAuth();
@@ -163,6 +164,9 @@ export function Profile() {
               <p className="text-3xl font-bold">
                 {profile.money_sent.toLocaleString()} руб.
               </p>
+            </div>
+            <div className="bg-[#A0937D]/90 p-8 rounded-[30px] shadow-xl w-[300px] md:w-[400px] text-white font-sans">
+              <WeatherWidget city={profile.city || "Москва"} />
             </div>
           </div>
           <h1 className="text-[#574C3A] mb-4 ml-4 font-bold">Покупки</h1>

@@ -14,6 +14,7 @@ import {
 import { getProfile } from "@/api/user";
 import { useEffect, useState } from "react";
 import type { UserProfile } from "@/types/user";
+import { WeatherWidget } from "./WeatherWidget";
 
 export function Header() {
   const { isAuthenticated } = useAuth();
