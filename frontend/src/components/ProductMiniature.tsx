@@ -2,6 +2,7 @@ import { useState, type Key } from "react";
 
 import { ActionButton } from "./ActionButtons";
 import { addItemToCart } from "../api/cart";
+import React from "react";
 
 interface ProductMiniatureProps {
   id: Key;
@@ -11,7 +12,7 @@ interface ProductMiniatureProps {
   imageUrl: string | null | undefined;
 }
 
-export function ProductMiniature({
+export const ProductMiniature = React.memo(function ProductMiniature({
   id,
   name,
   vendor,
@@ -41,7 +42,8 @@ export function ProductMiniature({
       {imageUrl ? (
         <img
           src={new URL(imageUrl, import.meta.url).href}
-          alt={name}
+          alt={`Фото товара ${name}`}
+          loading="lazy"
           className="rounded-[15px] object-cover w-full h-full mb-3"
         />
       ) : (
@@ -64,4 +66,4 @@ export function ProductMiniature({
       />
     </div>
   );
-}
+});

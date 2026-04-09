@@ -26,7 +26,7 @@ export default function ProductBasketMiniature({
         {imageUrl ? (
           <img
             src={new URL(imageUrl, import.meta.url).href}
-            alt={name}
+            alt={`Фото выбранного товара ${name}`}
             className="w-[100px] h-full object-cover rounded-xl"
           />
         ) : (
@@ -41,8 +41,8 @@ export default function ProductBasketMiniature({
       </div>
       <div className="flex flex-col items-end gap-4 py-3">
         <span className="text-lg font-bold text-[#EDE6DB]">{price} руб.</span>
-        <button onClick={onRemove} aria-label="Корзина">
-          <img className="size-7" src={BucketIcon} alt="Корзина" />
+        <button onClick={onRemove} aria-label="Иконка корзины">
+          <img className="size-7" src={BucketIcon} alt="Иконка корзины" />
         </button>
       </div>
     </div>

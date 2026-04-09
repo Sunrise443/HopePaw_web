@@ -28,7 +28,6 @@ api.interceptors.request.use((config) => {
 //   (response) => response,
 //   (error) => {
 //     if (error.response?.status === 401) {
-//       // Токен истёк — редирект на логин
 //       localStorage.removeItem("access_token");
 //       window.location.href = "/login";
 //     }

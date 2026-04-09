@@ -18,7 +18,7 @@ export function VendorCard({
     >
       <img
         src={new URL(imageUrl, import.meta.url).href}
-        alt={name}
+        alt={`Изображение партнера ${name}`}
         className="rounded-[10px] h-40 p-1"
       />
       <div className="flex flex-col gap-2 text-left">

@@ -68,11 +68,11 @@ export function ProductsAdmin() {
             >
               <CardContent className="p-6">
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0">
+                  <div className="shrink-0">
                     {item.photo_url ? (
                       <img
                         src={item.photo_url}
-                        alt={item.name}
+                        alt={`Фото товара ${item.name}`}
                         className="w-24 h-24 object-cover rounded-lg border"
                         onError={(e) => {
                           (e.target as HTMLImageElement).src =

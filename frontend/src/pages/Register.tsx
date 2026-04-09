@@ -3,6 +3,7 @@ import { Header } from "../components/Header";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../api/user.ts";
 import pic5 from "../assets/image 7.png";
+import { Helmet } from "react-helmet-async";
 export function Register() {
   const navigate = useNavigate();
 
@@ -37,6 +38,16 @@ export function Register() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>Регистрация</title>
+        <meta
+          name="description"
+          content="Зарегистрируйтесь, чтобы получить доступ к своему профилю и истории покупок товаров для животных"
+        />
+        <link rel="canonical" href="http://localhost:5173/" />
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
+
       <Header />
       <main className="flex-1">
         <div className="container mx-auto px-4 py-8 lg:py-16">
@@ -61,7 +72,7 @@ export function Register() {
             <div className="flex justify-center lg:justify-end">
               <img
                 src={pic5}
-                alt="Illustration"
+                alt="Иллюстация"
                 className="max-h-[420px] object-contain"
               />
             </div>

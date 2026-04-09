@@ -15,6 +15,7 @@ export function Error403Page() {
 
         <img
           src={dogImage}
+          alt="Иллюстрация 403 ошибки"
           className="w-56 h-56 object-cover rounded-full mx-auto mb-8 shadow-lg"
         />
 

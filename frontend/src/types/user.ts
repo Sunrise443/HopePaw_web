@@ -4,7 +4,7 @@ export interface UserProfile {
   email: string;
   city?: string;
   money_sent: number;
-  role?: Role;
+  roles?: Role[];
 }
 
 export interface Role {

@@ -3,6 +3,7 @@ import { Header } from "../components/Header.tsx";
 import { VendorCard } from "../components/VendorCard.tsx";
 import type { Partner } from "../types/partner.ts";
 import { getPartners } from "../api/partners.ts";
+import { Helmet } from "react-helmet-async";
 
 export function About() {
   const [partners, setPartners] = useState<Partner[]>([]);
@@ -29,9 +30,24 @@ export function About() {
     fetchItems();
   }, []);
 
+  const helmet = (
+    <>
+      <Helmet>
+        <title>О нас — Контакты и партнеры</title>
+        <meta
+          name="description"
+          content="Узнайте о нашей идее, контактной информации и наших партнерах."
+        />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="http://localhost:5173/about" />
+      </Helmet>
+    </>
+  );
+
   if (loading) {
     return (
       <div>
+        {helmet}
         <Header />
         <div className="flex items-center justify-center h-screen">
           <p className="text-2xl font-semibold">Загрузка...</p>
@@ -43,6 +59,7 @@ export function About() {
   if (error) {
     return (
       <div>
+        {helmet}
         <Header />
         <div className="flex items-center justify-center h-screen">
           <p className="text-2xl font-semibold">{error}</p>
@@ -53,6 +70,7 @@ export function About() {
 
   return (
     <div>
+      {helmet}
       <Header />
       <div className="m-4 flex flex-col items-center">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl items-center mb-4">
@@ -70,9 +88,9 @@ export function About() {
           </h2>
 
           <div className="bg-[#A0937D] p-6 rounded-[30px] w-[350px] mx-auto lg:mx-0">
-            <h2 className="text-xl font-bold text-[#EDE6DB] mb-4">
+            <h1 className="text-xl font-bold text-[#EDE6DB] mb-4">
               Вы можете связаться с нами
-            </h2>
+            </h1>
             <div className="text-xl text-[#EDE6DB]">
               По номеру телефона
               <br />

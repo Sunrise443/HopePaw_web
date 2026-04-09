@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Header } from "../components/Header.tsx";
 import { ProductMiniature } from "../components/ProductMiniature.tsx";
 import type { Item } from "../types/item.ts";
 import { getItems } from "../api/items.ts";
+import { Helmet } from "react-helmet-async";
 
 const PET_TYPES = [
   { id: 0, value: 0, label: "Собака" },
@@ -39,64 +40,51 @@ export function Catalog() {
     setCurrentPage(1);
   }, [petTypeId, categoryId, maxPrice, sortType]);
 
-  useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+  const fetchItems = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        const response = await getItems({
-          pet_type_id: petTypeId,
-          category_id: categoryId,
-          max_price: maxPrice,
-          sort_type: sortType,
-          page: currentPage,
-          per_page: perPage,
-        });
+      const response = await getItems({
+        pet_type_id: petTypeId,
+        category_id: categoryId,
+        max_price: maxPrice,
+        sort_type: sortType,
+        page: currentPage,
+        per_page: perPage,
+      });
 
-        setItems(response.data.items);
-        setTotalPages(response.data.total_pages);
-      } catch (err: unknown) {
-        console.log(err);
-
-        setError("Ошибка при загрузке товаров");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchItems();
+      setItems(response.data.items);
+      setTotalPages(response.data.total_pages);
+    } catch (err: unknown) {
+      console.log(err);
+      setError("Ошибка при загрузке товаров");
+    } finally {
+      setLoading(false);
+    }
   }, [petTypeId, categoryId, maxPrice, sortType, currentPage, perPage]);
+
+  useEffect(() => {
+    fetchItems();
+  }, [fetchItems]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  if (loading) {
-    return (
-      <div>
-        <Header />
-        <div className="flex items-center justify-center h-screen">
-          <p className="text-2xl font-semibold">Загрузка...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div>
-        <Header />
-        <div className="flex items-center justify-center h-screen">
-          <p className="text-2xl font-semibold">{error}</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div>
+      <Helmet>
+        <title>Каталог — Товары для животных</title>
+        <meta
+          name="description"
+          content="Купите товары для животных и помогите приютам. Каталог товаров с фильтрацией и сортировкой."
+        />
+        <link rel="canonical" href="http://localhost:5173/catalog" />
+        <meta name="robots" content="index, follow" />
+      </Helmet>
+
       <Header />
       <div className="static m-4">
         <div className="flex items-center space-x-4 mb-4">
@@ -159,99 +147,114 @@ export function Catalog() {
           </select>
         </div>
 
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-6">
-          {items.map(({ id, name, vendor, price, photo_url }) => (
-            <ProductMiniature
-              key={id}
-              id={id}
-              name={name}
-              vendor={vendor}
-              price={price}
-              imageUrl={photo_url}
-            />
-          ))}
-        </div>
-
-        {totalPages > 1 && (
-          <div className="fixed bottom-0 left-0 right-0">
-            <div className="flex space-x-1 justify-center items-center space-x-2 mt-8 mb-4">
-              {(() => {
-                const pages = [];
-                const maxVisible = 5;
-                let startPage = Math.max(
-                  1,
-                  currentPage - Math.floor(maxVisible / 2),
-                );
-                const endPage = Math.min(
-                  totalPages,
-                  startPage + maxVisible - 1,
-                );
-
-                if (endPage - startPage + 1 < maxVisible) {
-                  startPage = Math.max(1, endPage - maxVisible + 1);
-                }
-
-                if (startPage > 1) {
-                  pages.push(
-                    <button
-                      key={1}
-                      onClick={() => handlePageChange(1)}
-                      className="px-3 py-2 rounded-[15px] bg-[#EDE6DB] text-[#574C3A] font-medium hover:bg-[#E0D6C8] transition-colors"
-                    >
-                      1
-                    </button>,
-                  );
-                  if (startPage > 2) {
-                    pages.push(
-                      <span
-                        key="dots-start"
-                        className="px-2 py-2 text-[#574C3A]"
-                      >
-                        ...
-                      </span>,
-                    );
-                  }
-                }
-
-                for (let i = startPage; i <= endPage; i++) {
-                  pages.push(
-                    <button
-                      key={i}
-                      onClick={() => handlePageChange(i)}
-                      className={`px-3 py-2 rounded-[15px] font-medium transition-colors ${
-                        currentPage === i
-                          ? "bg-[#574C3A] text-white"
-                          : "bg-[#EDE6DB] text-[#574C3A] hover:bg-[#E0D6C8]"
-                      }`}
-                    >
-                      {i}
-                    </button>,
-                  );
-                }
-
-                if (endPage < totalPages) {
-                  if (endPage < totalPages - 1) {
-                    pages.push(
-                      <span key="dots-end" className="px-2 py-2 text-[#574C3A]">
-                        ...
-                      </span>,
-                    );
-                  }
-                  pages.push(
-                    <button
-                      key={totalPages}
-                      onClick={() => handlePageChange(totalPages)}
-                      className="px-3 py-2 rounded-[15px] bg-[#EDE6DB] text-[#574C3A] font-medium hover:bg-[#E0D6C8] transition-colors"
-                    >
-                      {totalPages}
-                    </button>,
-                  );
-                }
-
-                return pages;
-              })()}
-            </div>
+        {loading ? (
+          <div className="flex items-center justify-center h-screen">
+            <p className="text-2xl font-semibold">Загрузка...</p>
           </div>
+        ) : error ? (
+          <div className="flex items-center justify-center h-screen">
+            <p className="text-2xl font-semibold">{error}</p>
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-6">
+              {items.map(({ id, name, vendor, price, photo_url }) => (
+                <ProductMiniature
+                  key={id}
+                  id={id}
+                  name={name}
+                  vendor={vendor}
+                  price={price}
+                  imageUrl={photo_url}
+                />
+              ))}
+            </div>
+
+            {totalPages > 1 && (
+              <div className="fixed bottom-0 left-0 right-0">
+                <div className="flex space-x-1 justify-center items-center mt-8 mb-4">
+                  {(() => {
+                    const pages = [];
+                    const maxVisible = 5;
+                    let startPage = Math.max(
+                      1,
+                      currentPage - Math.floor(maxVisible / 2),
+                    );
+                    const endPage = Math.min(
+                      totalPages,
+                      startPage + maxVisible - 1,
+                    );
+
+                    if (endPage - startPage + 1 < maxVisible) {
+                      startPage = Math.max(1, endPage - maxVisible + 1);
+                    }
+
+                    if (startPage > 1) {
+                      pages.push(
+                        <button
+                          key={1}
+                          onClick={() => handlePageChange(1)}
+                          className="px-3 py-2 rounded-[15px] bg-[#EDE6DB] text-[#574C3A] font-medium hover:bg-[#E0D6C8] transition-colors"
+                        >
+                          1
+                        </button>,
+                      );
+                      if (startPage > 2) {
+                        pages.push(
+                          <span
+                            key="dots-start"
+                            className="px-2 py-2 text-[#574C3A]"
+                          >
+                            ...
+                          </span>,
+                        );
+                      }
+                    }
+
+                    for (let i = startPage; i <= endPage; i++) {
+                      pages.push(
+                        <button
+                          key={i}
+                          onClick={() => handlePageChange(i)}
+                          className={`px-3 py-2 rounded-[15px] font-medium transition-colors ${
+                            currentPage === i
+                              ? "bg-[#574C3A] text-white"
+                              : "bg-[#EDE6DB] text-[#574C3A] hover:bg-[#E0D6C8]"
+                          }`}
+                        >
+                          {i}
+                        </button>,
+                      );
+                    }
+
+                    if (endPage < totalPages) {
+                      if (endPage < totalPages - 1) {
+                        pages.push(
+                          <span
+                            key="dots-end"
+                            className="px-2 py-2 text-[#574C3A]"
+                          >
+                            ...
+                          </span>,
+                        );
+                      }
+                      pages.push(
+                        <button
+                          key={totalPages}
+                          onClick={() => handlePageChange(totalPages)}
+                          className="px-3 py-2 rounded-[15px] bg-[#EDE6DB] text-[#574C3A] font-medium hover:bg-[#E0D6C8] transition-colors"
+                        >
+                          {totalPages}
+                        </button>,
+                      );
+                    }
+
+                    return pages;
+                  })()}
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

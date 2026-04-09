@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Header } from "../components/Header";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 export function Login() {
   const { login } = useAuth();
@@ -25,12 +26,21 @@ export function Login() {
 
   return (
     <div>
+      <Helmet>
+        <title>Вход в профиль</title>
+        <meta
+          name="description"
+          content="Войдите в ваш профиль, чтобы получить доступ к возможности покупки товаров и поддержки приютов."
+        />
+        <link rel="canonical" href="http://localhost:5173/login" />
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
       <Header />
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="bg-[#A0937D] rounded-3xl p-8 w-[600px]">
-          <h2 className="text-center text-lg font-semibold text-[#EDE6DB] mb-6">
+          <h1 className="text-center text-lg font-semibold text-[#EDE6DB] mb-6">
             Рады помогать с Вами снова!
-          </h2>
+          </h1>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
