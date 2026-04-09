@@ -17,6 +17,7 @@ export function VendorCard({
       className="bg-[#A0937D] rounded-[24px] p-4 flex items-center gap-6 w-full max-w-[900px]"
     >
       <img
+        loading="lazy"
         src={new URL(imageUrl, import.meta.url).href}
         alt={`Изображение партнера ${name}`}
         className="rounded-[10px] h-40 p-1"

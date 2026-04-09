@@ -71,6 +71,7 @@ export function Register() {
 
             <div className="flex justify-center lg:justify-end">
               <img
+                loading="lazy"
                 src={pic5}
                 alt="Иллюстация"
                 className="max-h-[420px] object-contain"

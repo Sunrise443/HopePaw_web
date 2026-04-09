@@ -227,8 +227,9 @@ export function EditOrAddProductForm({
                     {photoPreview && (
                       <div className="mt-2">
                         <img
+                          loading="lazy"
                           src={photoPreview}
-                          alt="Photo addition preview"
+                          alt={`Фото товара ${item?.name}`}
                           className="w-full h-32 object-cover rounded-md border"
                         />
                       </div>

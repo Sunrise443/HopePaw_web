@@ -166,6 +166,7 @@ export default function Basket() {
             <div className="grid gap-4 flex-1">
               <div className="bg-[#A0937D] rounded-2xl p-3 flex flex-col gap-4">
                 <img
+                  loading="lazy"
                   src={MapPicture}
                   alt="Карта приютов"
                   className="w-full h-auto rounded-lg"

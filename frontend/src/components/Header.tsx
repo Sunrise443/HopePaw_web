@@ -102,12 +102,22 @@ export function Header() {
 
       <div className="flex items-center space-x-4">
         <NavLink to="/basket">
-          <img className="size-7" src={BasketIcon} alt="Иконка корзины" />
+          <img
+            loading="lazy"
+            className="size-7"
+            src={BasketIcon}
+            alt="Иконка корзины"
+          />
         </NavLink>
 
         {isAuthenticated ? (
           <NavLink to="/profile">
-            <img className="size-7" src={ProfileIcon} alt="Иконка профиля" />
+            <img
+              loading="lazy"
+              className="size-7"
+              src={ProfileIcon}
+              alt="Иконка профиля"
+            />
           </NavLink>
         ) : (
           <div className="flex items-center space-x-4">

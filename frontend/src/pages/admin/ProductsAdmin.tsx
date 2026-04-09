@@ -71,6 +71,7 @@ export function ProductsAdmin() {
                   <div className="shrink-0">
                     {item.photo_url ? (
                       <img
+                        loading="lazy"
                         src={item.photo_url}
                         alt={`Фото товара ${item.name}`}
                         className="w-24 h-24 object-cover rounded-lg border"
