@@ -4,4 +4,5 @@ export type WeatherData = {
   humidity: number;
   wind_speed: number;
   icon: string;
+  main: string;
 };

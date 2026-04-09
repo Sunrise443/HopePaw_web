@@ -15,4 +15,5 @@ class WeatherService:
             "icon": data["weather"][0]["icon"],
             "humidity": data["main"]["humidity"],
             "wind_speed": data["wind"]["speed"],
+            "main": data["weather"][0]["main"],
         }

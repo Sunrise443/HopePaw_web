@@ -22,6 +22,8 @@ export function Profile() {
     roles: [],
   });
 
+  const [weatherCity, setWeatherCity] = useState(profile.city || "Москва");
+
   const [initialProfile, setInitialProfile] = useState<UserProfile>({
     id: 0,
     login: "",
@@ -48,6 +50,7 @@ export function Profile() {
         getMyPurchases(),
       ]);
 
+      setWeatherCity(profileRes.data.city || "Москва");
       setProfile(profileRes.data);
       setInitialProfile(profileRes.data);
       setPurchases(purchasesRes.data);
@@ -71,6 +74,7 @@ export function Profile() {
       });
 
       setProfile(res.data);
+      setWeatherCity(res.data.city || "Москва");
       setInitialProfile(res.data);
     } catch (e) {
       console.log(e);
@@ -165,8 +169,8 @@ export function Profile() {
                 {profile.money_sent.toLocaleString()} руб.
               </p>
             </div>
-            <div className="bg-[#A0937D]/90 p-8 rounded-[30px] shadow-xl w-[300px] md:w-[400px] text-white font-sans">
-              <WeatherWidget city={profile.city || "Москва"} />
+            <div className="bg-[#A0937D]/90 p-8 rounded-[60px] shadow-xl w-auto text-white font-sans">
+              <WeatherWidget city={weatherCity} />
             </div>
           </div>
           <h1 className="text-[#574C3A] mb-4 ml-4 font-bold">Покупки</h1>
