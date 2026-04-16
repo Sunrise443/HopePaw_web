@@ -22,6 +22,7 @@ from schemas.items import (
     PaginatedItemsResponse,
 )
 from services.crud import get_item_by_id
+from services.items import create_item_service
 from services.minio import FileService
 from sqlalchemy import func
 from sqlalchemy.orm import Session
@@ -42,27 +43,17 @@ async def create_item(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_permission(PermissionEnum.PRODUCT_CREATE)),
 ):
-    file_id = None
-
-    if photo and photo.filename:
-        file_service = FileService(db)
-        uploaded_file = await file_service.upload_file(photo, current_user)
-        file_id = uploaded_file.id
-
-    db_item = Item(
+    return await create_item_service(
+        db=db,
+        current_user=current_user,
         name=name,
-        description=description,
         price=price,
         vendor_id=vendor_id,
+        description=description,
         pet_type_id=pet_type_id,
         category_id=category_id,
-        file_id=file_id,
+        photo=photo,
     )
-
-    db.add(db_item)
-    db.commit()
-    db.refresh(db_item)
-    return db_item
 
 
 @router.get("/items/", response_model=PaginatedItemsResponse)
