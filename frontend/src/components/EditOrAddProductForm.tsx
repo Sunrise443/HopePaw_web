@@ -125,7 +125,7 @@ export function EditOrAddProductForm({
         <DialogTrigger asChild>
           <Button>
             {isEditing ? (
-              <Pen />
+              <Pen aria-label="кнопка редактировать товар" />
             ) : (
               <>
                 Добавить товар <Plus />
@@ -247,7 +247,7 @@ export function EditOrAddProductForm({
                   onClick={() => setIsDeleteDialogOpen(true)}
                   disabled={isLoading}
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <Trash2 aria-label="удалить" className="h-4 w-4" />
                 </Button>
               )}
               <div className="flex gap-2">
