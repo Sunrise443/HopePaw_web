@@ -1,4 +1,4 @@
-import React, { type ReactNode, useMemo, useState } from "react";
+import React, { type ReactNode, useState } from "react";
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
