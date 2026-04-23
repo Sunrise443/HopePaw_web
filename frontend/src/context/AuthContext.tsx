@@ -9,6 +9,7 @@ import {
 import api, { accessToken, setAccessToken } from "../api/axios.ts";
 import { getProfile } from "@/api/user.ts";
 import type { UserProfile } from "@/types/user.ts";
+import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
 type AuthContextType = {
@@ -29,7 +30,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const [user, setUser] = useState<UserProfile | null>(null);
 
   const isAuthenticated = !!user; // теперь зависит от состояния user
-  const isAdmin = user?.roles?.some((role) => role.name === "admin") ?? false;
+  const isAdmin = user?.role?.name === "admin";
 
   // При монтировании пытаемся восстановить пользователя
   useEffect(() => {
@@ -63,15 +64,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     setAccessToken(response.data.access_token);
 
     // Декодируем JWT, чтобы получить данные пользователя
-    const decoded = jwtDecode(response.data.access_token) as Partial<UserProfile>;
-    setUser((prev) => ({
-      id: decoded.id ?? prev?.id ?? 0,
-      login: decoded.login ?? prev?.login ?? "",
-      email: decoded.email ?? prev?.email ?? "",
-      city: decoded.city ?? prev?.city,
-      money_sent: decoded.money_sent ?? prev?.money_sent ?? 0,
-      roles: decoded.roles ?? prev?.roles ?? [],
-    }));
+    setUser(jwtDecode(response.data.access_token));
   };
 
   const logout = () => {
