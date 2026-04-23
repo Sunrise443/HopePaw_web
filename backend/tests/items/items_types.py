@@ -1,3 +1,9 @@
+import pytest
+
+
+pytestmark = pytest.mark.integration
+
+
 def test_items_response_structure(client):
     response = client.get("/items/items/")
     assert response.status_code == 200

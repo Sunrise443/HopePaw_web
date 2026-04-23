@@ -1,8 +1,7 @@
-from fastapi.testclient import TestClient
-from main import app
+import pytest
 
 
-client = TestClient(app)
+pytestmark = pytest.mark.integration
 
 
 def test_read_items_invalid_page(client):

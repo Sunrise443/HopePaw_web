@@ -1,3 +1,9 @@
+import pytest
+
+
+pytestmark = pytest.mark.integration
+
+
 def test_read_items(client):
     response = client.get("/items/items/")
 

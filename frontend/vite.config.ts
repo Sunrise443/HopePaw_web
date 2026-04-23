@@ -15,5 +15,15 @@ export default defineConfig({
     globals: true,
     setupFiles: "./src/setupTests.ts",
     exclude: ["tests/**", "node_modules/**", "dist/**"],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "html"],
+      thresholds: {
+        lines: 60,
+        functions: 60,
+        branches: 50,
+        statements: 60,
+      },
+    },
   },
 });

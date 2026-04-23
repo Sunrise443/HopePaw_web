@@ -1,9 +1,11 @@
 from unittest import TestCase
 from unittest.mock import AsyncMock, MagicMock, patch
 
+import pytest
 from services.items import create_item_service
 
 
+@pytest.mark.unit
 class TestCreateItem(TestCase):
     def test_create_item_with_photo(self):
 
