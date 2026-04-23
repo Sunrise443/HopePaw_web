@@ -1,8 +1,9 @@
 import uuid
 from datetime import timedelta
 from io import BytesIO
+from urllib.parse import urlsplit, urlunsplit
 
-from core.config import MINIO_BUCKET
+from core.config import MINIO_BUCKET, MINIO_PUBLIC_ENDPOINT
 from core.minio_init import minio_client
 from fastapi import HTTPException, UploadFile
 from models.file import FileModel
@@ -12,6 +13,33 @@ from sqlalchemy.orm import Session
 
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
 ALLOWED_TYPES = ["image/jpeg", "image/png"]
+
+
+def to_public_presigned_url(url: str) -> str:
+    if not MINIO_PUBLIC_ENDPOINT:
+        return url
+
+    parsed_url = urlsplit(url)
+    endpoint = MINIO_PUBLIC_ENDPOINT.strip()
+    parsed_endpoint = urlsplit(endpoint if "://" in endpoint else f"//{endpoint}")
+
+    scheme = (
+        parsed_url.scheme if parsed_endpoint.scheme == "" else parsed_endpoint.scheme
+    )
+    netloc = parsed_endpoint.netloc if parsed_endpoint.netloc else parsed_endpoint.path
+
+    if not netloc:
+        return url
+
+    return urlunsplit(
+        (
+            scheme,
+            netloc,
+            parsed_url.path,
+            parsed_url.query,
+            parsed_url.fragment,
+        )
+    )
 
 
 class FileService:
@@ -64,38 +92,36 @@ class FileService:
         if not db_file:
             raise HTTPException(status_code=404, detail="File not found")
 
-        from datetime import timedelta
-
         url = minio_client.presigned_get_object(
             bucket_name=MINIO_BUCKET,
             object_name=db_file.key,
             expires=timedelta(minutes=5),
         )
-        return url
+        return to_public_presigned_url(url)
 
     def get_presigned_url_public(self, file_id: str) -> str:
         db_file = self.db.query(FileModel).filter(FileModel.id == file_id).first()
         if not db_file:
             raise HTTPException(status_code=404, detail="File not found")
 
-        from datetime import timedelta
-
-        return minio_client.presigned_get_object(
+        url = minio_client.presigned_get_object(
             bucket_name=MINIO_BUCKET,
             object_name=db_file.key,
             expires=timedelta(minutes=15),
         )
+        return to_public_presigned_url(url)
 
     def get_presigned_urls(self, file_ids: list[str]) -> dict[str, str]:
         files = self.db.query(FileModel).filter(FileModel.id.in_(file_ids)).all()
 
         urls = {}
         for file in files:
-            urls[file.id] = minio_client.presigned_get_object(
+            url = minio_client.presigned_get_object(
                 bucket_name=MINIO_BUCKET,
                 object_name=file.key,
                 expires=timedelta(minutes=5),
             )
+            urls[file.id] = to_public_presigned_url(url)
         return urls
 
     def delete_file(self, file_id: str, owner: User):
