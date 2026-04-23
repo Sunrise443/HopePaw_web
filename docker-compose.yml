@@ -1,13 +1,16 @@
-version: "3.8"
 services:
   backend:
     build: ./backend
     ports:
       - "8000:8000"
     environment:
-      - MINIO_URL=minio:9000
-      - MINIO_ROOT_USER=minioadmin
-      - MINIO_ROOT_PASSWORD=minioadmin
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - MINIO_BUCKET=uploads
+      - MINIO_SECURE=false
+      - OPENWEATHER_API_KEY=test-api-key
+      - OPENWEATHER_BASE_URL=https://api.openweathermap.org/data/2.5
     depends_on:
       - minio
 
@@ -16,8 +19,8 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      - ./frontend:/frontend-app
+      - /frontend-app/node_modules
 
   minio:
     image: minio/minio

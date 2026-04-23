@@ -1,6 +1,6 @@
-FROM node:18-alpine
+FROM node:22-alpine
 WORKDIR /frontend-app
 COPY package*.json ./
 RUN npm install
 COPY . .
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "3000"]
