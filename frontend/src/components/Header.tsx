@@ -14,7 +14,6 @@ import {
 import { getProfile } from "@/api/user";
 import { useEffect, useState } from "react";
 import type { UserProfile } from "@/types/user";
-import { WeatherWidget } from "./WeatherWidget";
 
 export function Header() {
   const { isAuthenticated } = useAuth();
@@ -24,7 +23,7 @@ export function Header() {
     email: "",
     city: "",
     money_sent: 0,
-    role: undefined,
+    roles: [],
   });
 
   useEffect(() => {
@@ -43,15 +42,13 @@ export function Header() {
   }, [isAuthenticated]);
 
   const hasAdminOrManagerRole = () => {
-    if (!profile.role) return false;
-
-    return profile.role.name === "admin" || profile.role.name === "manager";
+    const roleNames = profile.roles?.map((role) => role.name) ?? [];
+    return roleNames.includes("admin") || roleNames.includes("manager");
   };
 
   const hasAdminRole = () => {
-    if (!profile.role) return false;
-
-    return profile.role.name === "admin";
+    const roleNames = profile.roles?.map((role) => role.name) ?? [];
+    return roleNames.includes("admin");
   };
 
   return (

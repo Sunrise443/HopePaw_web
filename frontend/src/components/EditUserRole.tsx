@@ -38,8 +38,9 @@ interface EditUserRoleProps {
 export function EditUserRole({ user, onSuccess }: EditUserRoleProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const currentRoleName = user.roles?.[0]?.name || "";
   const [selectedRoleName, setSelectedRoleName] = useState<string>(
-    user.role?.name || "",
+    currentRoleName,
   );
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -62,7 +63,7 @@ export function EditUserRole({ user, onSuccess }: EditUserRoleProps) {
   };
 
   // Проверка, является ли текущий пользователь админом (для предупреждения)
-  const isCurrentUserAdmin = user.role?.name === "admin";
+  const isCurrentUserAdmin = currentRoleName === "admin";
   // Проверка, пытается ли пользователь снять с себя права админа
   const isRemovingOwnAdmin = isCurrentUserAdmin && selectedRoleName !== "admin";
 
@@ -86,13 +87,13 @@ export function EditUserRole({ user, onSuccess }: EditUserRoleProps) {
               <FieldLabel>Текущая роль</FieldLabel>
               <Input
                 value={
-                  user.role?.name === "admin"
+                  currentRoleName === "admin"
                     ? "Администратор"
-                    : user.role?.name === "manager"
+                    : currentRoleName === "manager"
                       ? "Менеджер"
-                      : user.role?.name === "user"
+                      : currentRoleName === "user"
                         ? "Пользователь"
-                        : user.role?.name === "guest"
+                        : currentRoleName === "guest"
                           ? "Гость"
                           : "Не указана"
                 }
@@ -141,7 +142,7 @@ export function EditUserRole({ user, onSuccess }: EditUserRoleProps) {
               type="submit"
               disabled={
                 isLoading ||
-                selectedRoleName === user.role?.name ||
+                selectedRoleName === currentRoleName ||
                 isRemovingOwnAdmin
               }
             >
