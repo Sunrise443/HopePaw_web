@@ -1,3 +1,5 @@
+import time
+
 from minio import Minio
 
 from .config import (
@@ -18,5 +20,17 @@ minio_client = Minio(
 
 
 def init_bucket():
-    if not minio_client.bucket_exists(MINIO_BUCKET):
-        minio_client.make_bucket(MINIO_BUCKET)
+    max_attempts = 10
+    retry_delay_seconds = 2
+
+    for attempt in range(1, max_attempts + 1):
+        try:
+            if not minio_client.bucket_exists(MINIO_BUCKET):
+                minio_client.make_bucket(MINIO_BUCKET)
+            return
+        except Exception as exc:
+            if attempt == max_attempts:
+                raise RuntimeError(
+                    f"MinIO is unavailable after {max_attempts} attempts: {exc}"
+                ) from exc
+            time.sleep(retry_delay_seconds)
