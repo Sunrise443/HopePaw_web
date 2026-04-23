@@ -1,11 +1,4 @@
-from fastapi.testclient import TestClient
-from main import app
-
-
-client = TestClient(app)
-
-
-def test_items_response_structure():
+def test_items_response_structure(client):
     response = client.get("/items/items/")
     assert response.status_code == 200
     data = response.json()
@@ -16,7 +9,7 @@ def test_items_response_structure():
     assert "total_pages" in data
 
 
-def test_invalid_input():
+def test_invalid_input(client):
     response = client.get("/items/item/invalid")
 
     assert response.status_code == 422
