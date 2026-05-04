@@ -25,6 +25,5 @@ jobs:
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           working-directory: frontend
-          root-directory: frontend
           vercel-version: "53.1.0"
           vercel-args: "--prod"
