@@ -9,7 +9,6 @@ import {
 import api, { accessToken, setAccessToken } from "../api/axios.ts";
 import { getProfile } from "@/api/user.ts";
 import type { UserProfile } from "@/types/user.ts";
-import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
 type AuthContextType = {
@@ -30,7 +29,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const [user, setUser] = useState<UserProfile | null>(null);
 
   const isAuthenticated = !!user; // теперь зависит от состояния user
-  const isAdmin = user?.role?.name === "admin";
+  const isAdmin = user?.roles?.some((r) => r.name === "admin") ?? false;
 
   // При монтировании пытаемся восстановить пользователя
   useEffect(() => {

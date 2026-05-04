@@ -17,8 +17,12 @@ export const ProtectedRoute = ({
     return <Navigate to="/login" replace />;
   }
 
-  if (requiredRoles && (!user?.role || !requiredRoles.includes(user.role))) {
-    return <Navigate to="/error-403" replace />;
+  if (requiredRoles) {
+    const names = user?.roles?.map((r) => r.name) ?? [];
+    const allowed = names.some((n) => requiredRoles.includes(n));
+    if (!allowed) {
+      return <Navigate to="/error-403" replace />;
+    }
   }
 
   return <>{children}</>;

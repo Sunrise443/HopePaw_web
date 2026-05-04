@@ -36,10 +36,11 @@ interface EditUserRoleProps {
 }
 
 export function EditUserRole({ user, onSuccess }: EditUserRoleProps) {
+  const primaryRole = user.roles?.[0];
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedRoleName, setSelectedRoleName] = useState<string>(
-    user.role?.name || "",
+    primaryRole?.name || "",
   );
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -62,7 +63,7 @@ export function EditUserRole({ user, onSuccess }: EditUserRoleProps) {
   };
 
   // Проверка, является ли текущий пользователь админом (для предупреждения)
-  const isCurrentUserAdmin = user.role?.name === "admin";
+  const isCurrentUserAdmin = user.roles?.some((r) => r.name === "admin");
   // Проверка, пытается ли пользователь снять с себя права админа
   const isRemovingOwnAdmin = isCurrentUserAdmin && selectedRoleName !== "admin";
 
@@ -86,13 +87,13 @@ export function EditUserRole({ user, onSuccess }: EditUserRoleProps) {
               <FieldLabel>Текущая роль</FieldLabel>
               <Input
                 value={
-                  user.role?.name === "admin"
+                  primaryRole?.name === "admin"
                     ? "Администратор"
-                    : user.role?.name === "manager"
+                    : primaryRole?.name === "manager"
                       ? "Менеджер"
-                      : user.role?.name === "user"
+                      : primaryRole?.name === "user"
                         ? "Пользователь"
-                        : user.role?.name === "guest"
+                        : primaryRole?.name === "guest"
                           ? "Гость"
                           : "Не указана"
                 }
@@ -141,7 +142,7 @@ export function EditUserRole({ user, onSuccess }: EditUserRoleProps) {
               type="submit"
               disabled={
                 isLoading ||
-                selectedRoleName === user.role?.name ||
+                selectedRoleName === primaryRole?.name ||
                 isRemovingOwnAdmin
               }
             >
