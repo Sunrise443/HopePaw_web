@@ -23,8 +23,9 @@ jobs:
 
       - name: Run backend tests
         working-directory: backend
-        run: cd backend
-          pytest
+        run: |
+          cd backend
+          && pytest
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -37,7 +38,9 @@ jobs:
 
       - name: Run frontend tests
         working-directory: frontend
-        run: npm run test
+        run: |
+          cd frontend
+          && npm run test
 
   build:
     runs-on: ubuntu-latest
