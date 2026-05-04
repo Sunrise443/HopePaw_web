@@ -1,12 +1,12 @@
-import os
 import uuid
 
+import tests.env_setup  # noqa: F401
 import pytest
 from adapters.openweather_adapter import OpenWeatherAdapter
 from core.minio_init import minio_client
-from database import get_db  # noqa: E402
+from database import get_db
 from fastapi.testclient import TestClient
-from main import app  # noqa: E402
+from main import app
 from models.base import Base
 from models.category import Category
 from models.file import FileModel
@@ -19,13 +19,6 @@ from services.minio import FileService
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
-
-
-# Dedicated test environment (must be set before app imports)
-os.environ.setdefault("TESTING", "1")
-os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
-os.environ.setdefault("openweather_api_key", "test-api-key")
-os.environ.setdefault("openweather_base_url", "https://test-weather.local")
 
 
 @pytest.fixture

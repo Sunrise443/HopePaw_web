@@ -232,3 +232,4 @@ dist-ssr
 *.sw?
 
 config.py
+!backend/core/config.py
