@@ -1,0 +1,28 @@
+# Деплой только фронтенда (Vite) на Vercel.
+# Секреты GitHub: VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID (создаются в Vercel → Project → Settings → Git).
+# Переменная сборки VITE_API_BASE_URL задаётся в Vercel → Settings → Environment Variables (Production).
+name: CD — Vercel (frontend)
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [master]
+
+jobs:
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: frontend
+          vercel-args: "--prod"
